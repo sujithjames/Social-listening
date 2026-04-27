@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
-import { X, Check, Youtube, Instagram, Linkedin, Globe, Newspaper, Send, Music, Sparkles, Hash } from 'lucide-react'
+import { X, Check, Globe, Newspaper, Send, Music, Sparkles, Hash } from 'lucide-react'
 
 const SOURCES = [
   { id: 'facebook',  name: 'Facebook',    desc: 'Posts, visitor posts and comments', color: '#1877F2', bg: '#EBF5FF', letter: 'f' },
   { id: 'twitter',   name: 'X (Twitter)', desc: 'Posts, replies, and reposts',        color: '#0F172A', bg: '#F1F5F9', letter: 'X' },
-  { id: 'instagram', name: 'Instagram',   desc: 'Posts and reels',                    color: '#E1306C', bg: '#FFF0F5', icon: Instagram },
-  { id: 'youtube',   name: 'YouTube',     desc: 'Videos only',                        color: '#FF0000', bg: '#FFF1F1', icon: Youtube },
+  { id: 'instagram', name: 'Instagram',   desc: 'Posts and reels',                    color: '#E1306C', bg: '#FFF0F5', letter: 'IG' },
+  { id: 'youtube',   name: 'YouTube',     desc: 'Videos only',                        color: '#FF0000', bg: '#FFF1F1', letter: 'YT' },
   { id: 'tiktok',    name: 'TikTok',      desc: 'Videos and comments',               color: '#010101', bg: '#F8F8F8', icon: Music },
-  { id: 'linkedin',  name: 'LinkedIn',    desc: 'Posts, articles and comments',       color: '#0A66C2', bg: '#EBF4FF', icon: Linkedin },
+  { id: 'linkedin',  name: 'LinkedIn',    desc: 'Posts, articles and comments',       color: '#0A66C2', bg: '#EBF4FF', letter: 'in' },
   { id: 'reddit',    name: 'Reddit',      desc: 'Posts and comments',                color: '#FF4500', bg: '#FFF2EE', letter: 'R' },
   { id: 'web',       name: 'Web',         desc: 'Blogs, articles and comments',       color: '#155EEF', bg: '#EEF4FF', icon: Globe },
   { id: 'telegram',  name: 'Telegram',    desc: 'Posts and channels',                color: '#0088CC', bg: '#EBF7FF', icon: Send },
