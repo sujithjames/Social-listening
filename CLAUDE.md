@@ -184,6 +184,7 @@ When a new design decision is confirmed (new token, new pattern, new frozen comp
 
 ## 14. Git Checkpoints
 
-| Hash | Feature | Restore |
-|------|---------|---------|
-| `af79cd0` | Trending topics feature — SearchPage refactored, TopicDetailPage added | `git reset --hard af79cd0` |
+| Hash | Friendly Name | Feature | Restore |
+|------|--------------|---------|---------|
+| `af79cd0` | Social Listening 1.2 | Trending topics — SearchPage refactored, Google & Pinterest trends tables | `git reset --hard af79cd0` |
+| `c9e204a` | Social Listening 1.3 | Topic Detail Page — PRD metrics, sentiment donut, trend chart, keyword cloud, save-as-topic flow | `git reset --hard c9e204a` |
