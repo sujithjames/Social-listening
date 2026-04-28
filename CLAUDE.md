@@ -179,3 +179,11 @@ Currently used by `TopicsPage`. Reuse in any new page that needs a title + subti
 ## 13. Evolving This File
 
 When a new design decision is confirmed (new token, new pattern, new frozen component), **add it here** so it's available in future sessions without re-briefing.
+
+---
+
+## 14. Git Checkpoints
+
+| Hash | Feature | Restore |
+|------|---------|---------|
+| `af79cd0` | Trending topics feature — SearchPage refactored, TopicDetailPage added | `git reset --hard af79cd0` |

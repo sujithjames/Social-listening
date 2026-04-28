@@ -142,11 +142,10 @@ export default function SearchPage() {
   function handleSearch(e) {
     e.preventDefault()
     if (!query.trim()) return
-    navigate('/insights', { state: { query } })
+    navigate('/topic-detail', { state: { query, isSavedTopic: false } })
   }
 
   function handleTopicCreated({ title, sources, keywords }) {
-    setShowModal(false)
     const kwArray = typeof keywords === 'string'
       ? keywords.split(',').map(k => k.trim()).filter(Boolean)
       : (Array.isArray(keywords) ? keywords : [])
@@ -162,6 +161,7 @@ export default function SearchPage() {
     const updatedTopics = [...topics, newTopic]
     setTopics(updatedTopics)
     saveTopicsToStorage(updatedTopics)
+    navigate('/topic-detail', { state: { query: title, isSavedTopic: true } })
   }
 
   function handleDeleteTopic(id) {
@@ -197,23 +197,11 @@ export default function SearchPage() {
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 text-[14px]">
-              <span className="font-medium text-gray-900">
-                Total searches:{' '}
-                <span className="font-normal text-gray-500">{TOTAL_SEARCHES}/{MAX_SEARCHES}</span>
-              </span>
-              <div className="w-px h-4 bg-gray-200" />
-              <span className="font-medium text-gray-900">
-                Topics: <span className="font-normal text-gray-500">{topics.length}</span>
-              </span>
-            </div>
-            <button
-              onClick={() => setShowModal(true)}
-              className="h-8 px-3 rounded border border-[#84ADFF] bg-white text-[13px] font-semibold text-[#004EEB] hover:bg-hl-blue-light transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
-            >
-              Create Topic
-            </button>
+          <div className="flex items-center gap-3 text-[14px]">
+            <span className="font-medium text-gray-900">
+              Total searches:{' '}
+              <span className="font-normal text-gray-500">{TOTAL_SEARCHES}/{MAX_SEARCHES}</span>
+            </span>
           </div>
         </div>
 
@@ -250,10 +238,10 @@ export default function SearchPage() {
         {/* ── Tab content ── */}
         {activeTab === 'Topic' ? (
           <div className="flex-1 overflow-y-auto px-5 pb-5">
-            {topics.length === 0 ? (
-              /* Blank state: illustration + trending cards */
-              <div className="flex flex-col">
-                {/* Hero empty state */}
+            <div className="flex flex-col gap-5">
+
+              {topics.length === 0 ? (
+                /* Blank state: illustration + CTA */
                 <div className="flex flex-col items-center gap-4 py-8">
                   <ListeningIllustration />
                   <div className="flex flex-col items-center gap-1.5 text-center">
@@ -270,75 +258,26 @@ export default function SearchPage() {
                     Create topic
                   </button>
                 </div>
-
-                {/* Divider */}
-                <div className="border-t border-gray-100 my-2" />
-
-                {/* Trending section */}
-                <div className="space-y-4 pt-4 pb-2">
+              ) : (
+                /* Topics state: summary → cards */
+                <div className="space-y-4 pt-2">
                   <div className="flex items-end justify-between">
                     <div>
-                      <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1">What's trending elsewhere</p>
-                      <p className="text-[17px] font-semibold text-gray-900">A peek at what's trending right now</p>
+                      <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Your listening topics</p>
+                      <p className="text-[16px] font-semibold text-gray-900">
+                        {topics.length} active {topics.length === 1 ? 'topic' : 'topics'}
+                      </p>
                     </div>
-                    <button className="text-[13px] font-semibold text-hl-blue hover:underline flex items-center gap-1">
-                      See all trends →
+                    <button
+                      onClick={() => setShowModal(true)}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded border border-[#84ADFF] bg-white text-[13px] font-semibold text-[#004EEB] hover:bg-hl-blue-light transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)] shrink-0"
+                    >
+                      <Plus size={13} />
+                      Create topic
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-4 gap-3">
-                    {TRENDING_DATA.map(trend => (
-                      <div key={trend.id} className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <PlatformIcon platform={trend.platform} size={26} />
-                            <p className="text-[13px] font-semibold text-gray-900">{trend.platform}</p>
-                          </div>
-                          <p className="text-[11px] text-gray-400 font-medium">{trend.keywords} keywords</p>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <p className="text-[13px] font-semibold text-gray-800">{trend.trend}</p>
-                          <p className="text-[12px] text-gray-500">{trend.metric}</p>
-                        </div>
-                        <Sparkline path={trend.sparkline} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              /* Topics state: cards + summary */
-              <div className="space-y-5 pt-2">
-                <div className="flex items-end justify-between">
-                  <div>
-                    <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Your listening topics</p>
-                    <p className="text-[18px] font-semibold text-gray-900">
-                      {topics.length} active {topics.length === 1 ? 'topic' : 'topics'}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setShowModal(true)}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded border border-[#84ADFF] bg-white text-[13px] font-semibold text-[#004EEB] hover:bg-hl-blue-light transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)] shrink-0"
-                  >
-                    <Plus size={13} />
-                    Create topic
-                  </button>
-                </div>
-
-                {/* Topic cards */}
-                <div className="grid grid-cols-2 gap-3">
-                  {topics.map(topic => (
-                    <TopicCard
-                      key={topic.id}
-                      topic={topic}
-                      onDelete={() => handleDeleteTopic(topic.id)}
-                    />
-                  ))}
-                </div>
-
-                {/* Summary row */}
-                <div>
-                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-2">Summary</p>
+                  {/* Summary stats */}
                   <div className="grid grid-cols-3 gap-3">
                     <div className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
                       <p className="text-[12px] text-gray-500 font-medium mb-1">Total Mentions</p>
@@ -353,9 +292,54 @@ export default function SearchPage() {
                       <p className="text-[20px] font-bold text-gray-900">{topics.length}</p>
                     </div>
                   </div>
+
+                  {/* Topic cards */}
+                  <div className="grid grid-cols-3 gap-3">
+                    {topics.map(topic => (
+                      <TopicCard
+                        key={topic.id}
+                        topic={topic}
+                        onDelete={() => handleDeleteTopic(topic.id)}
+                        onClick={() => navigate('/topic-detail', { state: { query: topic.name, isSavedTopic: true } })}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Trending section — always visible */}
+              <div className="border-t border-gray-100 pt-5 space-y-4 pb-2">
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1">What's trending elsewhere</p>
+                    <p className="text-[16px] font-semibold text-gray-900">A peek at what's trending right now</p>
+                  </div>
+                  <button className="text-[13px] font-semibold text-hl-blue hover:underline flex items-center gap-1">
+                    See all trends →
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-4 gap-3">
+                  {TRENDING_DATA.map(trend => (
+                    <div key={trend.id} className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <PlatformIcon platform={trend.platform} size={26} />
+                          <p className="text-[13px] font-semibold text-gray-900">{trend.platform}</p>
+                        </div>
+                        <p className="text-[11px] text-gray-400 font-medium">{trend.keywords} keywords</p>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <p className="text-[13px] font-semibold text-gray-800">{trend.trend}</p>
+                        <p className="text-[12px] text-gray-500">{trend.metric}</p>
+                      </div>
+                      <Sparkline path={trend.sparkline} />
+                    </div>
+                  ))}
                 </div>
               </div>
-            )}
+
+            </div>
           </div>
         ) : (
           <div className="flex-1 flex items-center justify-center text-gray-400">
@@ -374,23 +358,23 @@ export default function SearchPage() {
   )
 }
 
-function TopicCard({ topic, onDelete }) {
+function TopicCard({ topic, onDelete, onClick }) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 hover:shadow-md hover:border-gray-300 transition-all relative group cursor-pointer">
+    <div onClick={onClick} className="bg-white rounded-xl border border-gray-200 p-3.5 flex flex-col gap-2.5 hover:shadow-md hover:border-gray-300 transition-all relative group cursor-pointer">
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
-        <p className="text-[14px] font-semibold text-gray-900 leading-snug">{topic.name}</p>
+        <p className="text-[13px] font-semibold text-gray-900 leading-snug">{topic.name}</p>
         <button
           onClick={(e) => { e.stopPropagation(); onDelete() }}
-          className="shrink-0 p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-all opacity-0 group-hover:opacity-100"
+          className="shrink-0 p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-md transition-all group-hover:text-gray-400"
         >
-          <Trash2 size={14} />
+          <Trash2 size={13} />
         </button>
       </div>
 
       {/* Tracking keywords */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-[12px] text-gray-400 font-medium">Tracking</span>
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <span className="text-[11px] text-gray-400 font-medium">Tracking</span>
         {(Array.isArray(topic.keywords) && topic.keywords.length > 0 ? topic.keywords : [topic.name]).slice(0, 3).map((kw, i) => (
           <span key={i} className="text-[11px] font-medium text-hl-blue bg-hl-blue-light px-2 py-0.5 rounded-full">
             {kw}
@@ -399,31 +383,31 @@ function TopicCard({ topic, onDelete }) {
       </div>
 
       {/* Source icons */}
-      <div className="flex gap-1.5">
-        {topic.sources.slice(0, 4).map(src => (
+      <div className="flex gap-1">
+        {topic.sources.slice(0, 5).map(src => (
           <SourceIcon key={src} src={src} />
         ))}
-        {topic.sources.length > 4 && (
-          <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-semibold text-gray-500">
-            +{topic.sources.length - 4}
+        {topic.sources.length > 5 && (
+          <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-semibold text-gray-500">
+            +{topic.sources.length - 5}
           </div>
         )}
       </div>
 
       {/* Stats row */}
-      <div className="flex items-center gap-0 pt-1 border-t border-gray-100 mt-auto">
+      <div className="flex items-center pt-2 border-t border-gray-100 mt-auto">
         <div className="flex-1">
-          <p className="text-[15px] font-bold text-gray-900">{topic.mentions.toLocaleString()}</p>
+          <p className="text-[14px] font-bold text-gray-900">{topic.mentions.toLocaleString()}</p>
           <p className="text-[11px] text-gray-400 mt-0.5">Mentions</p>
         </div>
-        <div className="w-px h-8 bg-gray-100 mx-3" />
+        <div className="w-px h-7 bg-gray-100 mx-2.5" />
         <div className="flex-1">
-          <p className="text-[15px] font-bold text-gray-900">{topic.sentiment}</p>
+          <p className="text-[14px] font-bold text-gray-900">{topic.sentiment}</p>
           <p className="text-[11px] text-gray-400 mt-0.5">Sentiment</p>
         </div>
-        <div className="w-px h-8 bg-gray-100 mx-3" />
+        <div className="w-px h-7 bg-gray-100 mx-2.5" />
         <div className="flex-1">
-          <p className="text-[15px] font-bold text-gray-900">{topic.sources.length}</p>
+          <p className="text-[14px] font-bold text-gray-900">{topic.sources.length}</p>
           <p className="text-[11px] text-gray-400 mt-0.5">Source{topic.sources.length !== 1 ? 's' : ''}</p>
         </div>
       </div>
@@ -437,7 +421,7 @@ function SourceIcon({ src }) {
   return (
     <div
       title={label}
-      className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0"
+      className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
       style={{ background: color }}
     >
       {label[0]}

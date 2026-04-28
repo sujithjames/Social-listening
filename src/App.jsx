@@ -4,6 +4,7 @@ import TopBar from './components/TopBar'
 import SearchPage from './pages/SearchPage'
 import InsightsPage from './pages/InsightsPage'
 import TopicsPage from './pages/TopicsPage'
+import TopicDetailPage from './pages/TopicDetailPage'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
               <Route path="/search" element={<SearchPage />} />
               <Route path="/insights" element={<InsightsPage />} />
               <Route path="/topics" element={<TopicsPage />} />
+              <Route path="/topic-detail" element={<TopicDetailPage />} />
             </Routes>
           </main>
         </div>
