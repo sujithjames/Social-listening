@@ -20,11 +20,11 @@ const NAV_SECTION_2 = [
   { icon: RefreshCw, label: 'Automation' },
   { icon: Globe, label: 'Sites' },
   { icon: Award, label: 'Memberships' },
-  { icon: Image, label: 'Media Storage' },
+  { icon: Image, label: 'Media storage' },
   { icon: Star, label: 'Reputation' },
   { icon: TrendingUp, label: 'Reporting' },
-  { icon: Grid3x3, label: 'App Marketplace' },
-  { icon: Tablet, label: 'Mobile App' },
+  { icon: Grid3x3, label: 'App marketplace' },
+  { icon: Tablet, label: 'Mobile app' },
 ]
 
 function NavItem({ icon: Icon, label, active }) {
@@ -52,7 +52,9 @@ function NavItem({ icon: Icon, label, active }) {
 
 export default function Sidebar() {
   return (
-    <aside className="relative flex flex-col w-[280px] min-h-screen bg-[#101828] px-2 py-4 shrink-0">
+    <>
+      <div className="w-[280px] shrink-0" />
+      <aside className="fixed top-0 left-0 flex flex-col w-[280px] h-screen bg-[#101828] px-2 py-4 shrink-0 overflow-y-auto z-20">
       <div className="flex flex-col flex-1 justify-between min-h-0">
         <div className="flex flex-col gap-4 flex-1 min-h-0">
 
@@ -113,11 +115,12 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Collapse toggle */}
-      <div className="absolute bottom-6 -right-3 bg-[#73E2A3] rounded-xl size-6 flex items-center justify-center shadow-sm cursor-pointer">
+    </aside>
+      {/* Collapse toggle — fixed outside aside so overflow-y-auto doesn't clip it */}
+      <div className="fixed bottom-6 left-[268px] z-30 bg-[#73E2A3] rounded-xl size-6 flex items-center justify-center shadow-sm cursor-pointer">
         <ChevronLeft size={14} className="text-[#101828]" strokeWidth={2.5} />
       </div>
-    </aside>
+    </>
   )
 }
 

@@ -147,7 +147,7 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
 
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-[14px] font-medium text-gray-700">Select Sources</label>
+                  <label className="text-[14px] font-medium text-gray-700">Select sources</label>
                   <span className="text-[12px] text-gray-400">{selectedSources.length} selected</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2.5">
@@ -357,7 +357,7 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
                 disabled={step === 1 ? !step1Valid : !step2Valid}
                 className="h-9 px-5 rounded-md bg-hl-blue text-white text-[14px] font-semibold hover:bg-hl-blue-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
               >
-                {step === 1 ? 'Next' : 'Create Topic'}
+                {step === 1 ? 'Next' : 'Create topic'}
               </button>
             </div>
           </div>

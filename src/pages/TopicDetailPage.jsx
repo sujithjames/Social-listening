@@ -3,13 +3,14 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, RefreshCw, Share2, Download, Bookmark, BookmarkCheck,
   ChevronDown, ExternalLink, TrendingUp, Flame, Eye, Heart, Repeat2, MessageSquare,
+  Check, X,
 } from 'lucide-react'
 import {
   ResponsiveContainer, AreaChart, Area, LineChart, Line, BarChart, Bar,
   PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis,
   ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip,
 } from 'recharts'
-import CreateTopicModal from '../components/CreateTopicModal'
+const STORAGE_KEY = 'sl.topics.v1'
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const SOCIAL_PLATFORMS = ['X', 'Instagram', 'Reddit', 'YouTube', 'News', 'LinkedIn']
@@ -343,7 +344,24 @@ export default function TopicDetailPage() {
   const [dateRange, setDateRange] = useState('Last 15 days')
   const [showDateMenu, setShowDateMenu] = useState(false)
   const [saved, setSaved] = useState(isSavedTopic)
-  const [showSaveModal, setShowSaveModal] = useState(false)
+  const [showToast, setShowToast] = useState(false)
+
+  function handleSave() {
+    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    const newTopic = {
+      id: Date.now(),
+      name: query,
+      keywords: [],
+      mentions: Math.floor(Math.random() * 900) + 150,
+      sentiment: Math.floor(Math.random() * 35) + 45,
+      sources: [...selectedPlatforms],
+      updated: 'Just now',
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...existing, newTopic]))
+    setSaved(true)
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 3000)
+  }
 
   const allSelected = selectedPlatforms.size === SOCIAL_PLATFORMS.length
 
@@ -446,7 +464,7 @@ export default function TopicDetailPage() {
             <button
               onClick={() => togglePlatform('All')}
               className={`px-2.5 py-1 rounded-full text-[12px] font-medium whitespace-nowrap transition-all ${
-                allSelected ? 'bg-hl-blue text-white' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
+                allSelected ? 'bg-hl-blue-light text-hl-blue border border-[#C7D7FD]' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
               }`}
             >All</button>
             {SOCIAL_PLATFORMS.map(p => (
@@ -454,7 +472,7 @@ export default function TopicDetailPage() {
                 key={p}
                 onClick={() => togglePlatform(p)}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium whitespace-nowrap transition-all ${
-                  selectedPlatforms.has(p) ? 'bg-hl-blue text-white' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
+                  selectedPlatforms.has(p) ? 'bg-hl-blue-light text-hl-blue border border-[#C7D7FD]' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
                 }`}
               >
                 <PlatformIcon name={p} size={14} />{p}
@@ -490,10 +508,10 @@ export default function TopicDetailPage() {
               </div>
             ) : (
               <button
-                onClick={() => setShowSaveModal(true)}
+                onClick={handleSave}
                 className="flex items-center gap-1.5 h-7 px-3 rounded-md bg-hl-blue hover:bg-hl-blue-dark text-white text-[12px] font-semibold transition-colors"
               >
-                <Bookmark size={13} />Save as Topic
+                <Bookmark size={13} />Save as topic
               </button>
             )}
           </div>
@@ -506,11 +524,11 @@ export default function TopicDetailPage() {
           {/* ─ KPI Cards ─ */}
           <div className="grid grid-cols-5 gap-3">
             {[
-              { label:'Total Mentions', value: computed.totalMentions.toLocaleString(), delta:'+12%', up:true },
+              { label:'Total mentions', value: computed.totalMentions.toLocaleString(), delta:'+12%', up:true },
               { label:'Positive',       value: positiveCount.toLocaleString(),           delta:'+5%',  up:true },
               { label:'Neutral',        value: neutralCount.toLocaleString(),            delta:'-1%',  up:false },
               { label:'Negative',       value: negativeCount.toLocaleString(),           delta:'-2%',  up:true },
-              { label:'Net Sentiment',  value: `${netScore} pts`,                        delta:'+7pts',up:true },
+              { label:'Net sentiment',  value: `${netScore} pts`,                        delta:'+7pts',up:true },
             ].map(m => (
               <div key={m.label} className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
                 <p className="text-[11px] text-neutral-500 mb-1 font-medium">{m.label}</p>
@@ -522,14 +540,14 @@ export default function TopicDetailPage() {
 
           {/* ─ Sentiment Analysis ─ */}
           <div>
-            <SectionHeader label="Sentiment Analysis" />
+            <SectionHeader label="Sentiment analysis" />
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Sentiment Distribution</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Sentiment distribution</p>
                 <SentimentDonut positive={computed.avgPositive} neutral={computed.avgNeutral} negative={computed.avgNegative} />
               </div>
               <div className="col-span-2 bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-1">Sentiment over Time</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-1">Sentiment over time</p>
                 <div className="flex items-center gap-4 mb-3">
                   {[{ label:'Positive', color:'#16A34A' },{ label:'Negative', color:'#DC2626' }].map(l => (
                     <div key={l.label} className="flex items-center gap-1.5">
@@ -567,7 +585,7 @@ export default function TopicDetailPage() {
             <SectionHeader label="Mentions" />
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Mentions by Platform</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Mentions by platform</p>
                 <ResponsiveContainer width="100%" height={160}>
                   <BarChart data={computed.platformData} margin={{ top:4, right:4, bottom:0, left:-20 }}>
                     <CartesianGrid {...gridStyle} vertical={false} />
@@ -581,7 +599,7 @@ export default function TopicDetailPage() {
                 </ResponsiveContainer>
               </div>
               <div className="col-span-2 bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-1">Mentions & Sentiment over Time</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-1">Mentions & sentiment over time</p>
                 <div className="flex items-center gap-4 mb-3">
                   {[{ label:'Mentions', color:'#EEF4FF', border:'#155EEF' },{ label:'Positive %', color:'#16A34A' }].map(l => (
                     <div key={l.label} className="flex items-center gap-1.5">
@@ -606,17 +624,17 @@ export default function TopicDetailPage() {
 
             {/* Activity Heatmap */}
             <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-              <p className="text-[13px] font-semibold text-neutral-900 mb-4">Activity Heatmap</p>
+              <p className="text-[13px] font-semibold text-neutral-900 mb-4">Activity heatmap</p>
               <ActivityHeatmap data={computed.heatmap} />
             </div>
           </div>
 
           {/* ─ Platform Intelligence ─ */}
           <div>
-            <SectionHeader label="Platform Intelligence" />
+            <SectionHeader label="Platform intelligence" />
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Share of Voice</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Share of voice</p>
                 <ResponsiveContainer width="100%" height={170}>
                   <PieChart>
                     <Pie data={computed.platformData.map(p => ({ name: p.name, value: p.mentions, color: p.color }))}
@@ -636,7 +654,7 @@ export default function TopicDetailPage() {
                 </div>
               </div>
               <div className="col-span-2 bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-1">Platform Trends over Time</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-1">Platform trends over time</p>
                 <div className="flex flex-wrap gap-3 mb-3">
                   {computed.pList.map(p => (
                     <div key={p} className="flex items-center gap-1.5">
@@ -662,10 +680,10 @@ export default function TopicDetailPage() {
 
           {/* ─ Emotion & Keywords ─ */}
           <div>
-            <SectionHeader label="Emotion & Keywords" />
+            <SectionHeader label="Emotion & keywords" />
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-2">Emotion Radar</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-2">Emotion radar</p>
                 <ResponsiveContainer width="100%" height={190}>
                   <RadarChart data={computed.emotions} margin={{ top:10, right:20, bottom:10, left:20 }}>
                     <PolarGrid stroke="#E5E7EB" />
@@ -676,7 +694,7 @@ export default function TopicDetailPage() {
                 </ResponsiveContainer>
               </div>
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Emotion Breakdown</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Emotion breakdown</p>
                 <div className="space-y-2.5">
                   {computed.emotions.map(e => (
                     <div key={e.subject} className="flex items-center gap-2">
@@ -690,7 +708,7 @@ export default function TopicDetailPage() {
                 </div>
               </div>
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Top Keywords</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Top keywords</p>
                 <div className="flex flex-wrap gap-x-3 gap-y-2 items-baseline">
                   {KEYWORDS.map(k => (
                     <span key={k.word} className="leading-snug cursor-default hover:opacity-70 transition-opacity"
@@ -726,7 +744,7 @@ export default function TopicDetailPage() {
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="col-span-2 bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Engagement over Time</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Engagement over time</p>
                 <ResponsiveContainer width="100%" height={150}>
                   <AreaChart data={computed.daily} margin={{ top:4, right:4, bottom:0, left:-20 }}>
                     <defs>
@@ -744,7 +762,7 @@ export default function TopicDetailPage() {
                 </ResponsiveContainer>
               </div>
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Engagement by Platform</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Engagement by platform</p>
                 <ResponsiveContainer width="100%" height={150}>
                   <BarChart data={computed.platformEngData} layout="vertical" margin={{ top:0, right:8, bottom:0, left:0 }}>
                     <XAxis type="number" tick={axisStyle} axisLine={false} tickLine={false} hide />
@@ -761,13 +779,13 @@ export default function TopicDetailPage() {
 
           {/* ─ Conversation Insights ─ */}
           <div>
-            <SectionHeader label="Conversation Insights" />
+            <SectionHeader label="Conversation insights" />
             <div className="grid grid-cols-3 gap-4">
               <div className="flex flex-col gap-4">
                 <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                   <div className="flex items-center gap-2 mb-3">
                     <TrendingUp size={13} className="text-hl-blue" />
-                    <p className="text-[13px] font-semibold text-neutral-900">Trending Topics</p>
+                    <p className="text-[13px] font-semibold text-neutral-900">Trending topics</p>
                   </div>
                   <div className="space-y-2.5">
                     {TRENDING_TOPICS.map((t, i) => (
@@ -788,7 +806,7 @@ export default function TopicDetailPage() {
                 <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-[13px] font-black text-hl-blue">#</span>
-                    <p className="text-[13px] font-semibold text-neutral-900">Trending Hashtags</p>
+                    <p className="text-[13px] font-semibold text-neutral-900">Trending hashtags</p>
                   </div>
                   <div className="space-y-2.5">
                     {TRENDING_HASHTAGS.map((h, i) => (
@@ -810,7 +828,7 @@ export default function TopicDetailPage() {
 
               <div className="col-span-2 bg-white rounded-xl border border-neutral-200 shadow-sm">
                 <div className="px-5 py-3.5 border-b border-neutral-200 flex items-center justify-between">
-                  <p className="text-[13px] font-semibold text-neutral-900">Conversation Feed</p>
+                  <p className="text-[13px] font-semibold text-neutral-900">Conversation feed</p>
                   <span className="text-[11px] text-neutral-400">Showing {computed.posts.length} of {computed.totalMentions.toLocaleString()}</span>
                 </div>
                 {computed.posts.length === 0 ? (
@@ -841,7 +859,7 @@ export default function TopicDetailPage() {
 
           {/* ─ Audience Insights ─ */}
           <div>
-            <SectionHeader label="Audience Insights" />
+            <SectionHeader label="Audience insights" />
             <div className="grid grid-cols-4 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                 <p className="text-[13px] font-semibold text-neutral-900 mb-3">Language</p>
@@ -874,7 +892,7 @@ export default function TopicDetailPage() {
                 </div>
               </div>
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Age Distribution</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Age distribution</p>
                 <ResponsiveContainer width="100%" height={150}>
                   <BarChart data={AUDIENCE_AGE} layout="vertical" margin={{ top:0, right:24, bottom:0, left:0 }}>
                     <XAxis type="number" hide />
@@ -885,7 +903,7 @@ export default function TopicDetailPage() {
                 </ResponsiveContainer>
               </div>
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Top Locations</p>
+                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Top locations</p>
                 <div className="space-y-2.5">
                   {AUDIENCE_LOCATIONS.map(l => (
                     <div key={l.name} className="flex items-center gap-2">
@@ -904,11 +922,19 @@ export default function TopicDetailPage() {
         </div>
       </div>
 
-      {showSaveModal && (
-        <CreateTopicModal
-          onClose={() => setShowSaveModal(false)}
-          onCreated={() => { setSaved(true); setShowSaveModal(false) }}
-        />
+      {showToast && (
+        <div className="fixed top-[10%] left-1/2 -translate-x-1/2 z-50 w-[320px] shadow-md">
+          <div className="bg-green-50 border border-green-300 rounded-xl px-4 py-2.5 flex items-start gap-2.5">
+            <Check size={14} className="text-green-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-[12px] font-semibold text-green-700">Topic saved</p>
+              <p className="text-[11px] text-green-600">"{query}" added to your topics</p>
+            </div>
+            <button onClick={() => setShowToast(false)} className="text-green-500 hover:text-green-700 transition-colors shrink-0 mt-0.5">
+              <X size={13} />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   )

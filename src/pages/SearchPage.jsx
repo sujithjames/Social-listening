@@ -38,45 +38,45 @@ const SPARKLINE_PATHS = [
 ]
 
 const TRENDING_DATA = [
-  { id: 1, platform: 'X / Twitter', hashtag: '#ChampionsLeague', context: 'Trending in Sports', metric: '32K Posts', sparkline: SPARKLINE_PATHS[0] },
-  { id: 2, platform: 'TikTok', hashtag: '#AIGenerated', context: 'Trending in Tech', metric: '4.2M Views', sparkline: SPARKLINE_PATHS[1] },
-  { id: 3, platform: 'Google', hashtag: '#AITools', context: 'Rising search term', metric: '45K Searches', sparkline: SPARKLINE_PATHS[2] },
-  { id: 4, platform: 'Instagram', hashtag: '#ContentCreator', context: 'Trending in Marketing', metric: '14K Posts', sparkline: SPARKLINE_PATHS[3] },
-  { id: 5, platform: 'Pinterest', hashtag: '#WebDesign', context: 'Trending in Design', metric: '2.1K Pins', sparkline: SPARKLINE_PATHS[4] },
-  { id: 6, platform: 'LinkedIn', hashtag: '#EmailMarketing', context: 'Trending in Business', metric: '8.7K Posts', sparkline: SPARKLINE_PATHS[5] },
-  { id: 7, platform: 'YouTube', hashtag: '#StartupLife', context: 'Trending in Entrepreneurship', metric: '2.8M Views', sparkline: SPARKLINE_PATHS[6] },
-  { id: 8, platform: 'Reddit', hashtag: '#DigitalMarketing', context: 'Hot in r/marketing', metric: '4.3K Comments', sparkline: SPARKLINE_PATHS[7] },
+  { id: 1, platform: 'X / Twitter', hashtag: '#ChampionsLeague', context: 'Trending in sports', metric: '32K posts', sparkline: SPARKLINE_PATHS[0] },
+  { id: 2, platform: 'TikTok', hashtag: '#AIGenerated', context: 'Trending in tech', metric: '4.2M views', sparkline: SPARKLINE_PATHS[1] },
+  { id: 3, platform: 'Google', hashtag: '#AITools', context: 'Rising search term', metric: '45K searches', sparkline: SPARKLINE_PATHS[2] },
+  { id: 4, platform: 'Instagram', hashtag: '#ContentCreator', context: 'Trending in marketing', metric: '14K posts', sparkline: SPARKLINE_PATHS[3] },
+  { id: 5, platform: 'Pinterest', hashtag: '#WebDesign', context: 'Trending in design', metric: '2.1K pins', sparkline: SPARKLINE_PATHS[4] },
+  { id: 6, platform: 'LinkedIn', hashtag: '#EmailMarketing', context: 'Trending in business', metric: '8.7K posts', sparkline: SPARKLINE_PATHS[5] },
+  { id: 7, platform: 'YouTube', hashtag: '#StartupLife', context: 'Trending in entrepreneurship', metric: '2.8M views', sparkline: SPARKLINE_PATHS[6] },
+  { id: 8, platform: 'Reddit', hashtag: '#DigitalMarketing', context: 'Hot in r/marketing', metric: '4.3K comments', sparkline: SPARKLINE_PATHS[7] },
 ]
 
 
 const GOOGLE_TRENDS = [
-  { rank: 1, name: 'atlético nacional - jaguares',   metric: '100.9K Searches', isNew: true,  change: null,   type: 'brand',   color: '#16A34A' },
-  { rank: 2, name: 'bank holiday',                   metric: '100K Searches',   isNew: true,  change: null,   type: 'keyword', color: '#2563EB' },
-  { rank: 3, name: 'huachipato - univ. de concepción', metric: '20K Searches', isNew: true,  change: null,   type: 'brand',   color: '#1D4ED8' },
-  { rank: 4, name: 'holnapi időjárás',               metric: '20K Searches',    isNew: false, change: '+24%', type: 'keyword', color: '#0EA5E9' },
-  { rank: 5, name: 'tempo para amanhã',              metric: '20K Searches',    isNew: true,  change: null,   type: 'keyword', color: '#0284C7' },
-  { rank: 6, name: 'napoli vs milan',                metric: '8.3K Searches',   isNew: true,  change: null,   type: 'brand',   color: '#7C3AED' },
-  { rank: 7, name: 'casa pia vs benfica',            metric: '8K Searches',     isNew: true,  change: null,   type: 'brand',   color: '#DC2626' },
+  { rank: 1, name: 'atlético nacional - jaguares',   metric: '100.9K searches', isNew: true,  change: null,   type: 'brand',   color: '#16A34A' },
+  { rank: 2, name: 'bank holiday',                   metric: '100K searches',   isNew: true,  change: null,   type: 'keyword', color: '#2563EB' },
+  { rank: 3, name: 'huachipato - univ. de concepción', metric: '20K searches', isNew: true,  change: null,   type: 'brand',   color: '#1D4ED8' },
+  { rank: 4, name: 'holnapi időjárás',               metric: '20K searches',    isNew: false, change: '+24%', type: 'keyword', color: '#0EA5E9' },
+  { rank: 5, name: 'tempo para amanhã',              metric: '20K searches',    isNew: true,  change: null,   type: 'keyword', color: '#0284C7' },
+  { rank: 6, name: 'napoli vs milan',                metric: '8.3K searches',   isNew: true,  change: null,   type: 'brand',   color: '#7C3AED' },
+  { rank: 7, name: 'casa pia vs benfica',            metric: '8K searches',     isNew: true,  change: null,   type: 'brand',   color: '#DC2626' },
 ]
 
 const PINTEREST_TRENDS = [
-  { rank: 1, name: 'spring nails',              metric: '991 Pins', isNew: false, change: '+31%', type: 'hashtag', color: '#C026D3' },
-  { rank: 2, name: 'spring nails 2026',         metric: '788 Pins', isNew: false, change: '+18%', type: 'hashtag', color: '#DB2777' },
-  { rank: 3, name: 'coffe',                     metric: '657 Pins', isNew: false, change: '+12%', type: 'keyword', color: '#2563EB' },
-  { rank: 4, name: 'corte de pelo degrafilado', metric: '600 Pins', isNew: false, change: '+9%',  type: 'hashtag', color: '#9333EA' },
-  { rank: 5, name: 'low cortisol',              metric: '588 Pins', isNew: false, change: '+22%', type: 'keyword', color: '#0EA5E9' },
-  { rank: 6, name: 'dibujo de rostro',          metric: '496 Pins', isNew: false, change: '+7%',  type: 'keyword', color: '#0284C7' },
-  { rank: 7, name: 'nails spring',              metric: '487 Pins', isNew: false, change: '+14%', type: 'hashtag', color: '#E879F9' },
+  { rank: 1, name: 'spring nails',              metric: '991 pins', isNew: false, change: '+31%', type: 'hashtag', color: '#C026D3' },
+  { rank: 2, name: 'spring nails 2026',         metric: '788 pins', isNew: false, change: '+18%', type: 'hashtag', color: '#DB2777' },
+  { rank: 3, name: 'coffe',                     metric: '657 pins', isNew: false, change: '+12%', type: 'keyword', color: '#2563EB' },
+  { rank: 4, name: 'corte de pelo degrafilado', metric: '600 pins', isNew: false, change: '+9%',  type: 'hashtag', color: '#9333EA' },
+  { rank: 5, name: 'low cortisol',              metric: '588 pins', isNew: false, change: '+22%', type: 'keyword', color: '#0EA5E9' },
+  { rank: 6, name: 'dibujo de rostro',          metric: '496 pins', isNew: false, change: '+7%',  type: 'keyword', color: '#0284C7' },
+  { rank: 7, name: 'nails spring',              metric: '487 pins', isNew: false, change: '+14%', type: 'hashtag', color: '#E879F9' },
 ]
 
 const WIKIPEDIA_TRENDS = [
-  { rank: 1, name: 'Dhurandhar: The Revenge',        metric: '284.77K Views', isNew: false, change: '+156%', type: 'brand',   color: '#7C3AED' },
-  { rank: 2, name: 'Artemis II',                     metric: '204.38K Views', isNew: false, change: '+88%',  type: 'brand',   color: '#0F172A' },
-  { rank: 3, name: 'The Drama (film)',                metric: '195.14K Views', isNew: false, change: '+43%',  type: 'brand',   color: '#DC2626' },
-  { rank: 4, name: 'Lauren Betts',                   metric: '194.52K Views', isNew: false, change: '+67%',  type: 'brand',   color: '#0077B5' },
-  { rank: 5, name: 'List of highest-grossing films', metric: '187.94K Views', isNew: false, change: '+19%',  type: 'keyword', color: '#475467' },
-  { rank: 6, name: 'Easter',                         metric: '171.15K Views', isNew: false, change: '+210%', type: 'keyword', color: '#D97706' },
-  { rank: 7, name: '2026 Iran war',                  metric: '167.19K Views', isNew: false, change: '+334%', type: 'keyword', color: '#2563EB' },
+  { rank: 1, name: 'Dhurandhar: The Revenge',        metric: '284.77K views', isNew: false, change: '+156%', type: 'brand',   color: '#7C3AED' },
+  { rank: 2, name: 'Artemis II',                     metric: '204.38K views', isNew: false, change: '+88%',  type: 'brand',   color: '#0F172A' },
+  { rank: 3, name: 'The Drama (film)',                metric: '195.14K views', isNew: false, change: '+43%',  type: 'brand',   color: '#DC2626' },
+  { rank: 4, name: 'Lauren Betts',                   metric: '194.52K views', isNew: false, change: '+67%',  type: 'brand',   color: '#0077B5' },
+  { rank: 5, name: 'List of highest-grossing films', metric: '187.94K views', isNew: false, change: '+19%',  type: 'keyword', color: '#475467' },
+  { rank: 6, name: 'Easter',                         metric: '171.15K views', isNew: false, change: '+210%', type: 'keyword', color: '#D97706' },
+  { rank: 7, name: '2026 Iran war',                  metric: '167.19K views', isNew: false, change: '+334%', type: 'keyword', color: '#2563EB' },
 ]
 
 const REGIONS = ['Global', 'United States', 'India', 'United Kingdom', 'Brazil', 'Australia', 'Canada']
@@ -365,15 +365,15 @@ export default function SearchPage() {
                   {/* Summary stats */}
                   <div className="grid grid-cols-3 gap-3">
                     <div className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
-                      <p className="text-[12px] text-gray-500 font-medium mb-1">Total Mentions</p>
+                      <p className="text-[12px] text-gray-500 font-medium mb-1">Total mentions</p>
                       <p className="text-[20px] font-bold text-gray-900">{totalMentions.toLocaleString()}</p>
                     </div>
                     <div className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
-                      <p className="text-[12px] text-gray-500 font-medium mb-1">Avg Sentiment</p>
+                      <p className="text-[12px] text-gray-500 font-medium mb-1">Avg sentiment</p>
                       <p className="text-[20px] font-bold text-positive">{avgSentiment}%</p>
                     </div>
                     <div className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
-                      <p className="text-[12px] text-gray-500 font-medium mb-1">Active Topics</p>
+                      <p className="text-[12px] text-gray-500 font-medium mb-1">Active topics</p>
                       <p className="text-[20px] font-bold text-gray-900">{topics.length}</p>
                     </div>
                   </div>
@@ -693,27 +693,27 @@ function SocialTrendsTab({ onTrack }) {
       </div>
 
       <div className="flex items-baseline justify-between">
-        <p className="text-[20px] font-semibold text-gray-900">Social Trends</p>
+        <p className="text-[20px] font-semibold text-gray-900">Social trends</p>
         <p className="text-[12px] text-gray-400">Updated just now</p>
       </div>
 
       <div className="grid grid-cols-3 gap-4">
         <TrendColumn
-          title="Google Trends"
+          title="Google trends"
           avatar={{ letter: 'G', bg: '#EEF4FF', color: '#155EEF' }}
           accentColor="#4285F4"
           items={GOOGLE_TRENDS}
           onTrack={onTrack}
         />
         <TrendColumn
-          title="Pinterest Keywords"
+          title="Pinterest keywords"
           avatar={{ letter: 'P', bg: '#FFF0F0', color: '#E60023' }}
           accentColor="#E60023"
           items={PINTEREST_TRENDS}
           onTrack={onTrack}
         />
         <TrendColumn
-          title="Wikipedia Pageviews"
+          title="Wikipedia pageviews"
           avatar={{ letter: 'W', bg: '#F2F4F7', color: '#667085' }}
           accentColor="#94A3B8"
           items={WIKIPEDIA_TRENDS}

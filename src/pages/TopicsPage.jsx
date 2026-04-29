@@ -13,12 +13,12 @@ export default function TopicsPage() {
   return (
     <div className="flex-1 p-8 max-w-5xl mx-auto w-full">
       <div className="flex items-center justify-between mb-6">
-        <Header title="Saved Topics" subtitle="Auto-refreshed every 6 hours" />
+        <Header title="Saved topics" subtitle="Auto-refreshed every 6 hours" />
         <button
           onClick={() => navigate('/search')}
           className="px-4 py-2 bg-hl-blue hover:bg-hl-blue-dark text-white text-sm font-medium rounded-lg transition-colors"
         >
-          + New Topic
+          + New topic
         </button>
       </div>
 
