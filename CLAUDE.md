@@ -189,3 +189,4 @@ When a new design decision is confirmed (new token, new pattern, new frozen comp
 | `af79cd0` | Social Listening 1.2 | Trending topics — SearchPage refactored, Google & Pinterest trends tables | `git reset --hard af79cd0` |
 | `c9e204a` | Social Listening 1.3 | Topic Detail Page — PRD metrics, sentiment donut, trend chart, keyword cloud, save-as-topic flow | `git reset --hard c9e204a` |
 | `cc52122` | Social Listening 1.4 | Topic Detail Page card layout polish — rounded card wrapper with drop shadow, p-4 outer padding | `git reset --hard cc52122` |
+| `4f1df16` | Social Listening 1.5 | Social Trends redesign — ranked 3-column layout, PRD-aligned icon taxonomy (hashtag/brand/keyword), platform icons, RegionPicker, Track button, InsightsPage deleted | `git reset --hard 4f1df16` |
