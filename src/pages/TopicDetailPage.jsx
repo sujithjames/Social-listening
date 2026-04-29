@@ -519,23 +519,25 @@ export default function TopicDetailPage() {
 
         {/* ── Body ── */}
         <div className="flex-1 overflow-y-auto p-5 space-y-8">
-          <p className="text-[11px] text-neutral-400 -mb-4">Last updated 2 hours ago · {dateRange} · {computed.totalMentions.toLocaleString()} mentions</p>
 
           {/* ─ KPI Cards ─ */}
-          <div className="grid grid-cols-5 gap-3">
-            {[
-              { label:'Total mentions', value: computed.totalMentions.toLocaleString(), delta:'+12%', up:true },
-              { label:'Positive',       value: positiveCount.toLocaleString(),           delta:'+5%',  up:true },
-              { label:'Neutral',        value: neutralCount.toLocaleString(),            delta:'-1%',  up:false },
-              { label:'Negative',       value: negativeCount.toLocaleString(),           delta:'-2%',  up:true },
-              { label:'Net sentiment',  value: `${netScore} pts`,                        delta:'+7pts',up:true },
-            ].map(m => (
-              <div key={m.label} className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
-                <p className="text-[11px] text-neutral-500 mb-1 font-medium">{m.label}</p>
-                <p className="text-[20px] font-bold text-neutral-900 leading-tight">{m.value}</p>
-                <p className={`text-[11px] mt-1 font-medium ${m.up ? 'text-positive' : 'text-negative'}`}>{m.delta} vs prev</p>
-              </div>
-            ))}
+          <div className="flex flex-col gap-2">
+            <p className="text-[11px] text-neutral-400">Last updated 2 hours ago · {dateRange} · {computed.totalMentions.toLocaleString()} mentions</p>
+            <div className="grid grid-cols-5 gap-3">
+              {[
+                { label:'Total mentions', value: computed.totalMentions.toLocaleString(), delta:'+12%', up:true },
+                { label:'Positive',       value: positiveCount.toLocaleString(),           delta:'+5%',  up:true },
+                { label:'Neutral',        value: neutralCount.toLocaleString(),            delta:'-1%',  up:false },
+                { label:'Negative',       value: negativeCount.toLocaleString(),           delta:'-2%',  up:true },
+                { label:'Net sentiment',  value: `${netScore} pts`,                        delta:'+7pts',up:true },
+              ].map(m => (
+                <div key={m.label} className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
+                  <p className="text-[11px] text-neutral-500 mb-1 font-medium">{m.label}</p>
+                  <p className="text-[20px] font-bold text-neutral-900 leading-tight">{m.value}</p>
+                  <p className={`text-[11px] mt-1 font-medium ${m.up ? 'text-positive' : 'text-negative'}`}>{m.delta} vs prev</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* ─ Sentiment Analysis ─ */}
