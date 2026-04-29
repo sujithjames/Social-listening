@@ -24,11 +24,6 @@ const PLATFORM_CONFIG = {
   LinkedIn:  { color: '#0077B5' },
 }
 
-const PLATFORM_BADGE = {
-  X: 'bg-neutral-900 text-white', Reddit: 'bg-orange-500 text-white',
-  Instagram: 'bg-pink-500 text-white', YouTube: 'bg-red-600 text-white',
-  News: 'bg-hl-blue text-white', LinkedIn: 'bg-blue-600 text-white',
-}
 const SENTIMENT_BADGE = {
   positive: 'text-positive bg-green-50 border-green-200',
   neutral: 'text-neutral-500 bg-neutral-100 border-neutral-200',
@@ -602,7 +597,7 @@ export default function TopicDetailPage() {
                     <YAxis yAxisId="count" tick={axisStyle} axisLine={false} tickLine={false} />
                     <YAxis yAxisId="pct" orientation="right" domain={[0,100]} tick={axisStyle} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
                     <Tooltip content={ChartTooltip} cursor={{ fill:'rgba(21,94,239,0.04)' }} />
-                    <Bar yAxisId="count" dataKey="mentions" name="Mentions" fill="#EEF4FF" stroke="#155EEF" strokeWidth={0.5} radius={[3,3,0,0]} />
+                    <Bar yAxisId="count" dataKey="mentions" name="Mentions" fill="#E2E8F0" stroke="#94A3B8" strokeWidth={0.5} radius={[3,3,0,0]} />
                     <Line yAxisId="pct" type="monotone" dataKey="positive" name="Positive %" stroke="#16A34A" strokeWidth={2} dot={false} />
                   </ComposedChart>
                 </ResponsiveContainer>
@@ -825,7 +820,7 @@ export default function TopicDetailPage() {
                     {computed.posts.map(post => (
                       <div key={post.id} className="px-5 py-3.5 flex gap-3">
                         <div className="shrink-0 pt-0.5">
-                          <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${PLATFORM_BADGE[post.platform] || 'bg-neutral-200 text-neutral-700'}`}>{post.platform}</span>
+                          <PlatformIcon name={post.platform} size={20} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
