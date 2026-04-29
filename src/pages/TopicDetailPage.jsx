@@ -158,10 +158,11 @@ export default function TopicDetailPage() {
   const [showSaveModal, setShowSaveModal] = useState(false)
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-gray-50">
+    <div className="flex-1 flex flex-col min-h-0 bg-gray-50 p-4">
+      <div className="bg-white rounded-xl shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.08),0px_4px_6px_-2px_rgba(16,24,40,0.03)] flex flex-col flex-1 overflow-hidden">
 
       {/* ── Toolbar ── */}
-      <div className="bg-white border-b border-neutral-200 px-5 py-2.5 flex items-center gap-3 shrink-0">
+      <div className="border-b border-neutral-200 px-5 py-2.5 flex items-center gap-3 shrink-0">
         <button
           onClick={() => navigate('/search')}
           className="flex items-center gap-1.5 text-[13px] text-neutral-500 hover:text-neutral-800 transition-colors shrink-0"
@@ -361,6 +362,8 @@ export default function TopicDetailPage() {
             </div>
           </div>
         </div>
+      </div>
+
       </div>
 
       {showSaveModal && (

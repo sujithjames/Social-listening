@@ -13,7 +13,7 @@ export default function App() {
         <Sidebar />
         <div className="flex flex-col flex-1 min-w-0">
           <TopBar />
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto flex flex-col">
             <Routes>
               <Route path="/" element={<Navigate to="/search" replace />} />
               <Route path="/search" element={<SearchPage />} />
