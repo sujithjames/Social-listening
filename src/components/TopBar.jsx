@@ -79,14 +79,16 @@ export default function TopBar() {
           <div className="flex items-center gap-1 overflow-x-auto">
             {SUB_TABS.map(tab => (
               <div key={tab} className="relative flex items-center justify-center px-2 h-[28px] shrink-0">
-                <span
-                  className={`text-[15px] whitespace-nowrap ${
+                <span className={`flex items-center gap-1.5 text-[15px] whitespace-nowrap ${
                     tab === ACTIVE_SUB_TAB
                       ? 'font-semibold text-[#004EEB]'
                       : 'font-medium text-[#667085]'
                   }`}
                 >
                   {tab}
+                  {tab === 'Social listening' && (
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-[#EEF4FF] text-[#155EEF] leading-none">Beta</span>
+                  )}
                 </span>
                 {tab === ACTIVE_SUB_TAB && (
                   <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#155EEF] rounded-full" />
