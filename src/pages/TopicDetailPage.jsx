@@ -4,6 +4,66 @@ import { ArrowLeft, RefreshCw, Share2, Download, Bookmark, BookmarkCheck, Chevro
 import CreateTopicModal from '../components/CreateTopicModal'
 
 const PLATFORMS = ['All', 'X', 'Instagram', 'Reddit', 'YouTube', 'News', 'LinkedIn']
+
+function PlatformIcon({ name, size = 14 }) {
+  const s = size
+  switch (name) {
+    case 'X':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#0F172A"/>
+          <path d="M18.24 14.87 24.07 8h-1.38l-5.07 5.88L13.26 8H8.4l6.1 8.88L8.4 24h1.38l5.33-6.19L19.44 24H24.3l-6.06-9.13Zm-1.88 2.19-.62-.88-4.92-7.03h2.11l3.97 5.67.62.88 5.15 7.36h-2.11l-4.2-5.99Z" fill="white"/>
+        </svg>
+      )
+    case 'Instagram':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#E1306C"/>
+          <rect x="8.5" y="8.5" width="15" height="15" rx="4.5" stroke="white" strokeWidth="1.5"/>
+          <circle cx="16" cy="16" r="4" stroke="white" strokeWidth="1.5"/>
+          <circle cx="21" cy="11" r="1.2" fill="white"/>
+        </svg>
+      )
+    case 'Reddit':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#FF4500"/>
+          <circle cx="16" cy="17" r="5.5" fill="white"/>
+          <circle cx="16" cy="15" r="3.5" fill="white"/>
+          <path d="M11 17 a5 4 0 0 0 10 0" stroke="#FF4500" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+          <circle cx="14" cy="16.5" r="1" fill="#FF4500"/>
+          <circle cx="18" cy="16.5" r="1" fill="#FF4500"/>
+          <circle cx="20" cy="12" r="2" fill="white"/>
+          <path d="M18 13.5 l2-1.5" stroke="white" strokeWidth="1" strokeLinecap="round"/>
+        </svg>
+      )
+    case 'YouTube':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#FF0000"/>
+          <path d="M24.7 12.1a2.27 2.27 0 0 0-1.6-1.61C21.6 10.1 16 10.1 16 10.1s-5.6 0-7.1.4a2.27 2.27 0 0 0-1.6 1.6c-.4 1.5-.4 4.6-.4 4.6s0 3.1.4 4.6a2.27 2.27 0 0 0 1.6 1.6c1.5.4 7.1.4 7.1.4s5.6 0 7.1-.4a2.27 2.27 0 0 0 1.6-1.6c.4-1.5.4-4.6.4-4.6s0-3.1-.4-4.6Z" fill="white" fillOpacity="0.9"/>
+          <path d="M14.2 18.8V13l4.7 2.9-4.7 2.9Z" fill="#FF0000"/>
+        </svg>
+      )
+    case 'News':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#155EEF"/>
+          <rect x="8" y="10" width="16" height="12" rx="2" fill="white" fillOpacity="0.9"/>
+          <path d="M11 14h10M11 17h7M11 20h5" stroke="#155EEF" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      )
+    case 'LinkedIn':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#0077B5"/>
+          <path d="M10.5 13.5h2.5v9h-2.5v-9Zm1.25-4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM15 13.5h2.4v1.2h.04c.33-.63 1.15-1.3 2.36-1.3 2.53 0 3 1.67 3 3.84V22.5h-2.5v-4.8c0-.93-.02-2.13-1.3-2.13-1.3 0-1.5 1.02-1.5 2.07V22.5H15v-9Z" fill="white"/>
+        </svg>
+      )
+    default:
+      return null
+  }
+}
 const DATE_OPTIONS = ['Last 7 days', 'Last 15 days', 'Last 30 days']
 
 const MOCK_POSTS = [
@@ -183,12 +243,13 @@ export default function TopicDetailPage() {
             <button
               key={p}
               onClick={() => setActivePlatform(p)}
-              className={`px-2.5 py-1 rounded-full text-[12px] font-medium whitespace-nowrap transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium whitespace-nowrap transition-all ${
                 activePlatform === p
                   ? 'bg-hl-blue text-white'
                   : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
               }`}
             >
+              {p !== 'All' && <PlatformIcon name={p} size={14} />}
               {p}
             </button>
           ))}
@@ -279,7 +340,10 @@ export default function TopicDetailPage() {
             <div className="space-y-3">
               {PLATFORM_DIST.map(p => (
                 <div key={p.name} className="flex items-center gap-2">
-                  <span className="text-[11px] text-neutral-500 w-14 shrink-0">{p.name}</span>
+                  <div className="flex items-center gap-1.5 w-20 shrink-0">
+                    <PlatformIcon name={p.name} size={14} />
+                    <span className="text-[11px] text-neutral-500">{p.name}</span>
+                  </div>
                   <div className="flex-1 bg-neutral-100 rounded-full h-2">
                     <div className="bg-hl-blue h-2 rounded-full" style={{ width: `${p.pct}%` }} />
                   </div>

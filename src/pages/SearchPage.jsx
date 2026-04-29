@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Trash2 } from 'lucide-react'
+import { Search, Plus, Trash2, TrendingUp, RefreshCw, ChevronDown, Calendar, Globe, Tag, AtSign } from 'lucide-react'
 import CreateTopicModal from '../components/CreateTopicModal'
 
 const STORAGE_KEY = 'sl.topics.v1'
@@ -31,14 +31,62 @@ const SPARKLINE_PATHS = [
   "M0,24 C8,28 16,20 24,22 C32,24 40,18 48,16 C56,14 64,18 72,14 C80,10 88,12 96,8 C104,6 112,10 120,6",
   "M0,26 C8,22 16,24 24,18 C32,12 40,16 48,14 C56,12 64,8 72,12 C80,16 88,10 96,8 C104,6 112,8 120,4",
   "M0,20 C8,24 16,18 24,22 C32,26 40,20 48,16 C56,12 64,14 72,10 C80,8 88,12 96,8 C104,6 112,8 120,4",
+  "M0,30 C8,26 16,28 24,22 C32,16 40,20 48,14 C56,10 64,12 72,8 C80,6 88,10 96,6 C104,4 112,6 120,4",
+  "M0,22 C8,20 16,26 24,20 C32,14 40,18 48,22 C56,18 64,12 72,10 C80,8 88,14 96,10 C104,8 112,6 120,4",
+  "M0,18 C8,22 16,16 24,20 C32,24 40,16 48,12 C56,10 64,14 72,8 C80,6 88,8 96,6 C104,4 112,8 120,4",
+  "M0,26 C8,20 16,22 24,16 C32,10 40,14 48,18 C56,14 64,10 72,8 C80,12 88,8 96,6 C104,4 112,6 120,2",
 ]
 
 const TRENDING_DATA = [
-  { id: 1, platform: 'Google', keywords: 120, trend: '#1 #barcelona', metric: '22K Searches', sparkline: SPARKLINE_PATHS[0] },
-  { id: 2, platform: 'Pinterest', keywords: 84, trend: '#1 heated rivalry', metric: '1,687 Pins', sparkline: SPARKLINE_PATHS[1] },
-  { id: 3, platform: 'X / Twitter', keywords: 67, trend: '#1 champions league', metric: '32K Posts', sparkline: SPARKLINE_PATHS[2] },
-  { id: 4, platform: 'YouTube', keywords: 45, trend: '#1 match highlights', metric: '8.4M Views', sparkline: SPARKLINE_PATHS[3] },
+  { id: 1, platform: 'X / Twitter', hashtag: '#ChampionsLeague', context: 'Trending in Sports', metric: '32K Posts', sparkline: SPARKLINE_PATHS[0] },
+  { id: 2, platform: 'TikTok', hashtag: '#AIGenerated', context: 'Trending in Tech', metric: '4.2M Views', sparkline: SPARKLINE_PATHS[1] },
+  { id: 3, platform: 'Google', hashtag: '#AITools', context: 'Rising search term', metric: '45K Searches', sparkline: SPARKLINE_PATHS[2] },
+  { id: 4, platform: 'Instagram', hashtag: '#ContentCreator', context: 'Trending in Marketing', metric: '14K Posts', sparkline: SPARKLINE_PATHS[3] },
+  { id: 5, platform: 'Pinterest', hashtag: '#WebDesign', context: 'Trending in Design', metric: '2.1K Pins', sparkline: SPARKLINE_PATHS[4] },
+  { id: 6, platform: 'LinkedIn', hashtag: '#EmailMarketing', context: 'Trending in Business', metric: '8.7K Posts', sparkline: SPARKLINE_PATHS[5] },
+  { id: 7, platform: 'YouTube', hashtag: '#StartupLife', context: 'Trending in Entrepreneurship', metric: '2.8M Views', sparkline: SPARKLINE_PATHS[6] },
+  { id: 8, platform: 'Reddit', hashtag: '#DigitalMarketing', context: 'Hot in r/marketing', metric: '4.3K Comments', sparkline: SPARKLINE_PATHS[7] },
 ]
+
+
+const GOOGLE_TRENDS = [
+  { rank: 1, name: 'atlético nacional - jaguares',   metric: '100.9K Searches', isNew: true,  change: null,   type: 'brand',   color: '#16A34A' },
+  { rank: 2, name: 'bank holiday',                   metric: '100K Searches',   isNew: true,  change: null,   type: 'keyword', color: '#2563EB' },
+  { rank: 3, name: 'huachipato - univ. de concepción', metric: '20K Searches', isNew: true,  change: null,   type: 'brand',   color: '#1D4ED8' },
+  { rank: 4, name: 'holnapi időjárás',               metric: '20K Searches',    isNew: false, change: '+24%', type: 'keyword', color: '#0EA5E9' },
+  { rank: 5, name: 'tempo para amanhã',              metric: '20K Searches',    isNew: true,  change: null,   type: 'keyword', color: '#0284C7' },
+  { rank: 6, name: 'napoli vs milan',                metric: '8.3K Searches',   isNew: true,  change: null,   type: 'brand',   color: '#7C3AED' },
+  { rank: 7, name: 'casa pia vs benfica',            metric: '8K Searches',     isNew: true,  change: null,   type: 'brand',   color: '#DC2626' },
+]
+
+const PINTEREST_TRENDS = [
+  { rank: 1, name: 'spring nails',              metric: '991 Pins', isNew: false, change: '+31%', type: 'hashtag', color: '#C026D3' },
+  { rank: 2, name: 'spring nails 2026',         metric: '788 Pins', isNew: false, change: '+18%', type: 'hashtag', color: '#DB2777' },
+  { rank: 3, name: 'coffe',                     metric: '657 Pins', isNew: false, change: '+12%', type: 'keyword', color: '#2563EB' },
+  { rank: 4, name: 'corte de pelo degrafilado', metric: '600 Pins', isNew: false, change: '+9%',  type: 'hashtag', color: '#9333EA' },
+  { rank: 5, name: 'low cortisol',              metric: '588 Pins', isNew: false, change: '+22%', type: 'keyword', color: '#0EA5E9' },
+  { rank: 6, name: 'dibujo de rostro',          metric: '496 Pins', isNew: false, change: '+7%',  type: 'keyword', color: '#0284C7' },
+  { rank: 7, name: 'nails spring',              metric: '487 Pins', isNew: false, change: '+14%', type: 'hashtag', color: '#E879F9' },
+]
+
+const WIKIPEDIA_TRENDS = [
+  { rank: 1, name: 'Dhurandhar: The Revenge',        metric: '284.77K Views', isNew: false, change: '+156%', type: 'brand',   color: '#7C3AED' },
+  { rank: 2, name: 'Artemis II',                     metric: '204.38K Views', isNew: false, change: '+88%',  type: 'brand',   color: '#0F172A' },
+  { rank: 3, name: 'The Drama (film)',                metric: '195.14K Views', isNew: false, change: '+43%',  type: 'brand',   color: '#DC2626' },
+  { rank: 4, name: 'Lauren Betts',                   metric: '194.52K Views', isNew: false, change: '+67%',  type: 'brand',   color: '#0077B5' },
+  { rank: 5, name: 'List of highest-grossing films', metric: '187.94K Views', isNew: false, change: '+19%',  type: 'keyword', color: '#475467' },
+  { rank: 6, name: 'Easter',                         metric: '171.15K Views', isNew: false, change: '+210%', type: 'keyword', color: '#D97706' },
+  { rank: 7, name: '2026 Iran war',                  metric: '167.19K Views', isNew: false, change: '+334%', type: 'keyword', color: '#2563EB' },
+]
+
+const REGIONS = ['Global', 'United States', 'India', 'United Kingdom', 'Brazil', 'Australia', 'Canada']
+
+
+const RANK_STYLE = {
+  1: { text: 'text-amber-500',  bg: 'bg-amber-50'  },
+  2: { text: 'text-slate-400',  bg: 'bg-slate-50'  },
+  3: { text: 'text-orange-400', bg: 'bg-orange-50' },
+}
 
 function loadTopicsFromStorage() {
   try {
@@ -92,6 +140,42 @@ function PlatformIcon({ platform, size = 32 }) {
           <path d="M14.2 18.8V13l4.7 2.9-4.7 2.9Z" fill="#FF0000"/>
         </svg>
       )
+    case 'TikTok':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#0F172A"/>
+          <path d="M21 9h-2.5v9.5a2.5 2.5 0 1 1-2.5-2.5V13.5a5 5 0 1 0 5 5V13.2a6.8 6.8 0 0 0 4 1.3v-2.5A4.2 4.2 0 0 1 21 9Z" fill="white"/>
+        </svg>
+      )
+    case 'LinkedIn':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#0077B5"/>
+          <path d="M10.5 13.5h2.5v9h-2.5v-9Zm1.25-4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM15 13.5h2.4v1.2h.04c.33-.63 1.15-1.3 2.36-1.3 2.53 0 3 1.67 3 3.84V22.5h-2.5v-4.8c0-.93-.02-2.13-1.3-2.13-1.3 0-1.5 1.02-1.5 2.07V22.5H15v-9Z" fill="white"/>
+        </svg>
+      )
+    case 'Instagram':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#E1306C"/>
+          <rect x="8.5" y="8.5" width="15" height="15" rx="4.5" stroke="white" strokeWidth="1.5"/>
+          <circle cx="16" cy="16" r="4" stroke="white" strokeWidth="1.5"/>
+          <circle cx="21" cy="11" r="1.2" fill="white"/>
+        </svg>
+      )
+    case 'Reddit':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="#FF4500"/>
+          <circle cx="16" cy="17" r="5.5" fill="white"/>
+          <circle cx="16" cy="15" r="3.5" fill="white"/>
+          <path d="M11 17 a5 4 0 0 0 10 0" stroke="#FF4500" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+          <circle cx="14" cy="16.5" r="1" fill="#FF4500"/>
+          <circle cx="18" cy="16.5" r="1" fill="#FF4500"/>
+          <circle cx="20" cy="12" r="2" fill="white"/>
+          <path d="M18 13.5 l2-1.5" stroke="white" strokeWidth="1" strokeLinecap="round"/>
+        </svg>
+      )
     default:
       return (
         <div style={{ width: s, height: s, borderRadius: '50%', background: '#155EEF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: s * 0.35, fontWeight: 700 }}>
@@ -105,7 +189,7 @@ function PlatformIcon({ platform, size = 32 }) {
 function Sparkline({ path }) {
   const id = `grad-${Math.random().toString(36).slice(2)}`
   return (
-    <svg viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-10">
+    <svg viewBox="0 0 120 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-10">
       <defs>
         <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#155EEF" stopOpacity="0.18" />
@@ -132,6 +216,7 @@ export default function SearchPage() {
   const [activeTab, setActiveTab] = useState('Topic')
   const [query, setQuery] = useState('')
   const [showModal, setShowModal] = useState(false)
+  const [trackDefault, setTrackDefault] = useState('')
   const [topics, setTopics] = useState([])
   const navigate = useNavigate()
 
@@ -153,8 +238,8 @@ export default function SearchPage() {
       id: Date.now(),
       name: title,
       keywords: kwArray,
-      mentions: 0,
-      sentiment: 0,
+      mentions: Math.floor(Math.random() * 900) + 150,
+      sentiment: Math.floor(Math.random() * 35) + 45,
       sources,
       updated: 'Just now',
     }
@@ -314,43 +399,48 @@ export default function SearchPage() {
                     <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1">What's trending elsewhere</p>
                     <p className="text-[16px] font-semibold text-gray-900">A peek at what's trending right now</p>
                   </div>
-                  <button className="text-[13px] font-semibold text-hl-blue hover:underline flex items-center gap-1">
+                  <button onClick={() => setActiveTab('Social trends')} className="text-[13px] font-semibold text-hl-blue hover:underline flex items-center gap-1">
                     See all trends →
                   </button>
                 </div>
 
-                <div className="grid grid-cols-4 gap-3">
-                  {TRENDING_DATA.map(trend => (
-                    <div key={trend.id} className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <PlatformIcon platform={trend.platform} size={26} />
-                          <p className="text-[13px] font-semibold text-gray-900">{trend.platform}</p>
+                <div className="relative -mx-5">
+                  <div className="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth px-5 pb-1" style={{ scrollSnapType: 'x mandatory', scrollPaddingLeft: '20px' }}>
+                    {TRENDING_DATA.map(trend => (
+                      <div
+                        key={trend.id}
+                        className="w-[200px] shrink-0 bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-2.5 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer"
+                        style={{ scrollSnapAlign: 'start' }}
+                      >
+                        <div>
+                          <p className="text-[17px] font-bold text-gray-900 leading-tight">{trend.hashtag}</p>
+                          <p className="text-[12px] text-gray-400 mt-0.5">{trend.context}</p>
                         </div>
-                        <p className="text-[11px] text-gray-400 font-medium">{trend.keywords} keywords</p>
+                        <div className="flex items-center justify-between pt-1.5 border-t border-gray-100">
+                          <div className="flex items-center gap-1.5">
+                            <PlatformIcon platform={trend.platform} size={16} />
+                            <p className="text-[12px] text-gray-400 font-medium">{trend.platform}</p>
+                          </div>
+                          <p className="text-[12px] font-semibold text-gray-600">{trend.metric}</p>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <p className="text-[13px] font-semibold text-gray-800">{trend.trend}</p>
-                        <p className="text-[12px] text-gray-500">{trend.metric}</p>
-                      </div>
-                      <Sparkline path={trend.sparkline} />
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  <div className="pointer-events-none absolute right-0 top-0 bottom-1 w-14 bg-gradient-to-l from-white to-transparent" />
                 </div>
               </div>
 
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-400">
-            <p className="text-[14px]">Social trends coming soon</p>
-          </div>
+          <SocialTrendsTab onTrack={name => { setTrackDefault(name); setShowModal(true) }} />
         )}
       </div>
 
       {showModal && (
         <CreateTopicModal
-          onClose={() => setShowModal(false)}
+          defaultTitle={trackDefault}
+          onClose={() => { setShowModal(false); setTrackDefault('') }}
           onCreated={handleTopicCreated}
         />
       )}
@@ -393,6 +483,9 @@ function TopicCard({ topic, onDelete, onClick }) {
           </div>
         )}
       </div>
+
+      {/* Trend sparkline */}
+      <Sparkline path={SPARKLINE_PATHS[topic.id % SPARKLINE_PATHS.length]} />
 
       {/* Stats row */}
       <div className="flex items-center pt-2 border-t border-gray-100 mt-auto">
@@ -473,3 +566,161 @@ function ListeningIllustration() {
     </div>
   )
 }
+
+function RegionPicker() {
+  const [open, setOpen] = useState(false)
+  const [region, setRegion] = useState('Global')
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 bg-white text-[13px] font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+      >
+        <Globe size={14} className="text-gray-400" />
+        {region}
+        <ChevronDown size={12} className="text-gray-400" />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="absolute top-full left-0 mt-1.5 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+            {REGIONS.map(r => (
+              <button
+                key={r}
+                onClick={() => { setRegion(r); setOpen(false) }}
+                className={`w-full text-left px-3 py-2 text-[13px] transition-colors flex items-center justify-between ${
+                  region === r ? 'text-hl-blue font-semibold bg-hl-blue-light' : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                {r}
+                {region === r && <span className="text-hl-blue text-[11px]">✓</span>}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
+function TrendThumbnail({ type, color }) {
+  return (
+    <div
+      className="w-9 h-9 rounded-md flex items-center justify-center shrink-0"
+      style={{ background: `${color}22` }}
+    >
+      {type === 'hashtag' ? (
+        <span className="text-[17px] font-black leading-none" style={{ color }}>#</span>
+      ) : type === 'brand' ? (
+        <AtSign size={15} style={{ color }} strokeWidth={1.8} />
+      ) : (
+        <Tag size={15} style={{ color }} strokeWidth={1.8} />
+      )}
+    </div>
+  )
+}
+
+function TrendColumn({ title, avatar, accentColor, items, onTrack }) {
+  return (
+    <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+      <div className="flex items-center gap-3 px-4 py-3.5 border-b border-gray-100" style={{ background: `linear-gradient(135deg, ${accentColor}12 0%, transparent 70%)` }}>
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-[14px] font-bold shrink-0"
+          style={{ background: avatar.bg, color: avatar.color }}
+        >
+          {avatar.letter}
+        </div>
+        <p className="text-[14px] font-semibold text-gray-900 flex-1">{title}</p>
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+        </span>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {items.map(item => {
+          const medal = RANK_STYLE[item.rank]
+          return (
+            <div key={item.rank} className="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer">
+              <span className={`text-[11px] font-bold w-5 h-5 flex items-center justify-center rounded-full shrink-0 ${medal ? `${medal.text} ${medal.bg}` : 'text-gray-400'}`}>
+                {item.rank}
+              </span>
+              <TrendThumbnail type={item.type} color={item.color} />
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-medium text-gray-900 truncate">{item.name}</p>
+                <p className="text-[11px] text-gray-400 mt-0.5">{item.metric}</p>
+              </div>
+              <div className="shrink-0 w-16 flex items-center justify-end">
+                <button
+                  onClick={e => { e.stopPropagation(); onTrack(item.name) }}
+                  className="hidden group-hover:flex items-center gap-0.5 text-[11px] font-semibold text-hl-blue bg-hl-blue-light hover:bg-blue-100 px-2 py-1 rounded-md transition-colors"
+                >
+                  + Track
+                </button>
+                <div className="flex group-hover:hidden items-center gap-1">
+                  {item.isNew ? (
+                    <span className="text-[11px] font-semibold text-green-600 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-md">New</span>
+                  ) : (
+                    <>
+                      <TrendingUp size={12} className="text-green-500" />
+                      {item.change && <span className="text-[11px] font-semibold text-green-600">{item.change}</span>}
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function SocialTrendsTab({ onTrack }) {
+  return (
+    <div className="flex-1 overflow-y-auto px-5 pb-5 flex flex-col gap-4">
+      <div className="flex items-center justify-between pt-1">
+        <RegionPicker />
+        <div className="flex items-center gap-2">
+          <button className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-600 hover:bg-gray-50 transition-colors">
+            <Calendar size={14} />
+            Apr 29, 2026
+          </button>
+          <button className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 bg-white text-[13px] text-gray-600 hover:bg-gray-50 transition-colors">
+            <RefreshCw size={14} />
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div className="flex items-baseline justify-between">
+        <p className="text-[20px] font-semibold text-gray-900">Social Trends</p>
+        <p className="text-[12px] text-gray-400">Updated just now</p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <TrendColumn
+          title="Google Trends"
+          avatar={{ letter: 'G', bg: '#EEF4FF', color: '#155EEF' }}
+          accentColor="#4285F4"
+          items={GOOGLE_TRENDS}
+          onTrack={onTrack}
+        />
+        <TrendColumn
+          title="Pinterest Keywords"
+          avatar={{ letter: 'P', bg: '#FFF0F0', color: '#E60023' }}
+          accentColor="#E60023"
+          items={PINTEREST_TRENDS}
+          onTrack={onTrack}
+        />
+        <TrendColumn
+          title="Wikipedia Pageviews"
+          avatar={{ letter: 'W', bg: '#F2F4F7', color: '#667085' }}
+          accentColor="#94A3B8"
+          items={WIKIPEDIA_TRENDS}
+          onTrack={onTrack}
+        />
+      </div>
+    </div>
+  )
+}
+

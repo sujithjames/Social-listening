@@ -32,7 +32,7 @@ export default function TopicsPage() {
           {MOCK_TOPICS.map(topic => (
             <div
               key={topic.id}
-              onClick={() => navigate('/insights', { state: { query: topic.name } })}
+              onClick={() => navigate('/topic-detail', { state: { query: topic.name, isSavedTopic: true } })}
               className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm flex items-center gap-6 cursor-pointer hover:border-hl-blue transition-colors"
             >
               <div className="flex-1">

@@ -24,26 +24,12 @@ const SETUP_MESSAGES = [
   'Finalizing your topic...',
 ]
 
-const BOKEH = [
-  { color: '#1877F2', size: 32, left: '4%',  top: '30%', blur: 0 },
-  { color: '#E1306C', size: 20, left: '10%', top: '65%', blur: 2 },
-  { color: '#FF0000', size: 28, left: '18%', top: '20%', blur: 0 },
-  { color: '#0F172A', size: 22, left: '26%', top: '60%', blur: 0 },
-  { color: '#FF4500', size: 18, left: '34%', top: '35%', blur: 3 },
-  { color: '#0A66C2', size: 26, left: '43%', top: '55%', blur: 0 },
-  { color: '#0088CC', size: 20, left: '52%', top: '25%', blur: 0 },
-  { color: '#16A34A', size: 18, left: '60%', top: '65%', blur: 2 },
-  { color: '#010101', size: 24, left: '68%', top: '28%', blur: 0 },
-  { color: '#155EEF', size: 20, left: '76%', top: '60%', blur: 0 },
-  { color: '#6938EF', size: 30, left: '84%', top: '25%', blur: 1 },
-  { color: '#E1306C', size: 16, left: '91%', top: '62%', blur: 3 },
-]
 
 const CIRCLE_SOURCE_IDS = ['facebook', 'twitter', 'instagram', 'youtube', 'reddit', 'linkedin']
 
-export default function CreateTopicModal({ onClose, onCreated }) {
+export default function CreateTopicModal({ onClose, onCreated, defaultTitle = '' }) {
   const [step, setStep] = useState(1)
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState(defaultTitle)
   const [selectedSources, setSelectedSources] = useState(['facebook'])
   const [keywords, setKeywords] = useState('')
   const [ignoreWords, setIgnoreWords] = useState('')
@@ -91,71 +77,48 @@ export default function CreateTopicModal({ onClose, onCreated }) {
 
         {step < 3 && (
           <>
-            {/* ── Bokeh hero band ── */}
-            <div
-              className="relative h-14 overflow-hidden shrink-0"
-              style={{ background: 'linear-gradient(135deg, #EEF4FF 0%, #F3ECFF 40%, #FFF0F9 70%, #FFF8EC 100%)' }}
-            >
-              {BOKEH.map((dot, i) => (
-                <div
-                  key={i}
-                  className="absolute rounded-full"
-                  style={{
-                    left: dot.left, top: dot.top,
-                    width: dot.size, height: dot.size,
-                    backgroundColor: dot.color,
-                    opacity: 0.68,
-                    transform: 'translateY(-50%)',
-                    filter: dot.blur ? `blur(${dot.blur}px)` : undefined,
-                  }}
-                />
-              ))}
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.25) 100%)' }} />
-            </div>
-
             {/* ── Title + progress ── */}
-            <div className="px-6 pt-4 pb-3 border-b border-gray-100 shrink-0">
-              <div className="flex items-start justify-between mb-1">
+            <div className="px-7 pt-6 pb-5 border-b border-gray-100 shrink-0">
+              <div className="flex items-start justify-between">
                 <div>
-                  <h2 className="text-[18px] font-semibold text-gray-900">Create a Listening Topic</h2>
-                  <p className="text-[13px] text-gray-500 mt-0.5">Track any brand, keyword, or topic across the social web.</p>
+                  <h2 className="text-[22px] font-bold text-gray-900 leading-tight">Create a listening topic</h2>
+                  <p className="text-[14px] text-gray-500 mt-1">Define what conversations you'd like to monitor across the web.</p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors shrink-0 ml-4 mt-0.5"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors shrink-0 ml-4"
                 >
-                  <X size={16} />
+                  <X size={18} />
                 </button>
               </div>
 
-              <div className="flex items-start mt-4 gap-0">
+              <div className="flex items-center mt-5 gap-4">
                 {/* Step 1 */}
-                <div className="flex-1 flex flex-col gap-1.5">
-                  <div className="flex items-center">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-semibold shrink-0 transition-all ${
-                      step >= 1 ? 'bg-hl-blue text-white' : 'bg-white border-2 border-gray-300 text-gray-400'
-                    }`}>
-                      {step > 1 ? <Check size={12} strokeWidth={3} /> : '1'}
-                    </div>
-                    <div className={`flex-1 h-0.5 mx-3 rounded transition-colors duration-300 ${step > 1 ? 'bg-hl-blue' : 'bg-gray-200'}`} />
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-semibold shrink-0 transition-all ${
+                    step >= 1 ? 'bg-hl-blue text-white' : 'bg-gray-100 text-gray-400'
+                  }`}>
+                    {step > 1 ? <Check size={14} strokeWidth={3} /> : '1'}
                   </div>
                   <div>
-                    <p className="text-[13px] font-semibold text-gray-900">Sources</p>
-                    <p className="text-[11px] text-gray-500">Choose title and platforms</p>
+                    <p className="text-[15px] font-semibold text-gray-900 leading-tight">Name & sources</p>
+                    <p className="text-[13px] text-gray-500 leading-tight mt-1">Choose a title and platforms to track</p>
                   </div>
                 </div>
+
+                {/* Connector */}
+                <div className={`w-16 h-0.5 rounded transition-colors duration-300 shrink-0 ${step > 1 ? 'bg-hl-blue' : 'bg-gray-200'}`} />
+
                 {/* Step 2 */}
-                <div className="flex-1 flex flex-col gap-1.5">
-                  <div className="flex items-center">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[13px] font-semibold shrink-0 transition-all ${
-                      step >= 2 ? 'bg-hl-blue text-white' : 'bg-white border-2 border-gray-300 text-gray-400'
-                    }`}>
-                      2
-                    </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[14px] font-semibold shrink-0 transition-all ${
+                    step >= 2 ? 'bg-hl-blue text-white' : 'bg-gray-100 text-gray-400'
+                  }`}>
+                    2
                   </div>
                   <div>
-                    <p className={`text-[13px] font-semibold ${step >= 2 ? 'text-gray-900' : 'text-gray-400'}`}>Keywords & filters</p>
-                    <p className={`text-[11px] ${step >= 2 ? 'text-gray-500' : 'text-gray-300'}`}>Add keywords and refine results</p>
+                    <p className={`text-[15px] font-semibold leading-tight ${step >= 2 ? 'text-gray-900' : 'text-gray-500'}`}>Keywords & filters</p>
+                    <p className={`text-[13px] leading-tight mt-1 ${step >= 2 ? 'text-gray-500' : 'text-gray-400'}`}>Set keywords and refine your results</p>
                   </div>
                 </div>
               </div>
@@ -312,15 +275,14 @@ export default function CreateTopicModal({ onClose, onCreated }) {
                         width: 36, height: 36,
                         left: `calc(50% + ${cx}px - 18px)`,
                         top: `calc(50% + ${cy}px - 18px)`,
-                        backgroundColor: lit ? source.bg : '#F2F4F7',
+                        backgroundColor: source.bg,
                         transform: `scale(${lit ? 1 : 0.72})`,
-                        opacity: lit ? 1 : 0.3,
                         boxShadow: lit ? `0 0 0 3px ${source.color}20` : 'none',
                       }}
                     >
                       {Icon
                         ? <Icon size={15} style={{ color: lit ? source.color : '#98A2B3' }} />
-                        : <span className="text-[12px] font-bold" style={{ color: lit ? source.color : '#98A2B3' }}>{source.letter}</span>
+                        : <BrandGlyph id={source.id} size={15} color={lit ? source.color : '#98A2B3'} />
                       }
                     </div>
                   )
@@ -403,6 +365,52 @@ export default function CreateTopicModal({ onClose, onCreated }) {
       </div>
     </div>
   )
+}
+
+function BrandGlyph({ id, size = 15, color = 'currentColor' }) {
+  const common = { width: size, height: size, fill: color, 'aria-hidden': true }
+  switch (id) {
+    case 'facebook':
+      return (
+        <svg {...common} viewBox="0 0 24 24">
+          <path d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.2-1.5 1.5-1.5h1.6V4.9c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H8v3h2.4v7h3.1z" />
+        </svg>
+      )
+    case 'twitter':
+      return (
+        <svg {...common} viewBox="0 0 24 24">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+        </svg>
+      )
+    case 'instagram':
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" />
+          <circle cx="12" cy="12" r="4" />
+          <circle cx="17.5" cy="6.5" r="1" fill={color} stroke="none" />
+        </svg>
+      )
+    case 'youtube':
+      return (
+        <svg {...common} viewBox="0 0 24 24">
+          <path d="M23.5 6.2c-.3-1-1-1.8-2-2C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.5.6c-1 .3-1.7 1.1-2 2C0 8.2 0 12 0 12s0 3.8.5 5.8c.3 1 1 1.8 2 2 2 .5 9.5.5 9.5.5s7.5 0 9.5-.5c1-.3 1.7-1.1 2-2 .5-2 .5-5.8.5-5.8s0-3.8-.5-5.8zM9.5 15.6V8.4l6.4 3.6-6.4 3.6z" />
+        </svg>
+      )
+    case 'reddit':
+      return (
+        <svg {...common} viewBox="0 0 24 24">
+          <path d="M22 11.8c0-1.1-.9-2-2-2-.5 0-1 .2-1.4.6-1.4-.9-3.2-1.5-5.2-1.6l1-4.2 3 .7c0 .9.7 1.6 1.6 1.6.9 0 1.6-.7 1.6-1.6 0-.9-.7-1.6-1.6-1.6-.6 0-1.2.4-1.4.9L14.2 4c-.1 0-.2 0-.3.1-.1.1-.1.2-.1.3l-1.1 4.6c-2.1 0-4 .6-5.4 1.6-.4-.4-.9-.6-1.5-.6-1.1 0-2 .9-2 2 0 .8.5 1.5 1.1 1.8 0 .2-.1.4-.1.6 0 2.9 3.4 5.3 7.5 5.3s7.5-2.4 7.5-5.3c0-.2 0-.4-.1-.6.7-.3 1.2-1 1.2-1.8zM7 13.4c0-.7.6-1.3 1.3-1.3.7 0 1.3.6 1.3 1.3 0 .7-.6 1.3-1.3 1.3-.7 0-1.3-.6-1.3-1.3zm8 3.7c-1 1-2.6 1-3 1s-2 0-3-1c-.1-.1-.1-.3 0-.4.1-.1.3-.1.4 0 .6.6 2 .9 2.6.9.6 0 2-.2 2.6-.9.1-.1.3-.1.4 0 .1.1.1.3 0 .4zm-.3-2.4c-.7 0-1.3-.6-1.3-1.3 0-.7.6-1.3 1.3-1.3.7 0 1.3.6 1.3 1.3 0 .7-.6 1.3-1.3 1.3z" />
+        </svg>
+      )
+    case 'linkedin':
+      return (
+        <svg {...common} viewBox="0 0 24 24">
+          <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+        </svg>
+      )
+    default:
+      return null
+  }
 }
 
 function SourceCard({ source, selected, onToggle }) {

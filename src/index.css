@@ -30,6 +30,9 @@
   --color-accent-purple: #6938EF;
 }
 
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
 * { box-sizing: border-box; }
 
 body {
