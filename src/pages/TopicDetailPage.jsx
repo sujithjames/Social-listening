@@ -144,12 +144,14 @@ const AUDIENCE_LOCATIONS = [
 ]
 
 const MOCK_POSTS = [
-  { id:1, platform:'X',         author:'@marketingpro',            date:'Apr 24', text:"HighLevel has completely transformed how we manage our clients. The automation alone saves us 10+ hours a week.", sentiment:'positive' },
-  { id:2, platform:'Reddit',    author:'u/agencyowner_dan',        date:'Apr 23', text:"Switched from HubSpot to HighLevel 6 months ago. Honestly the onboarding was rough but the value is undeniable once you get it set up.", sentiment:'neutral' },
-  { id:3, platform:'Instagram', author:'@digitalstrategyco',       date:'Apr 22', text:"Our clients are seeing 3x lead conversion with HighLevel funnels. If you're not using this yet, you're leaving money on the table.", sentiment:'positive' },
-  { id:4, platform:'News',      author:'MarTech Today',            date:'Apr 21', text:"HighLevel continues to challenge legacy CRM platforms with its all-in-one agency suite, attracting over 60,000 agency customers globally.", sentiment:'positive' },
-  { id:5, platform:'YouTube',   author:'AgencyGrowthPodcast',      date:'Apr 20', text:"Just dropped a 45-min breakdown of HighLevel's new Social Planner. Mixed feelings — the UI needs work but the features are solid.", sentiment:'neutral' },
-  { id:6, platform:'LinkedIn',  author:'Sarah Chen · Growth Lead', date:'Apr 19', text:"We migrated our entire agency stack to HighLevel Q1 2026. ROI has been incredible — 40% reduction in tool costs and better client retention.", sentiment:'positive' },
+  { id:1, platform:'X',         author:'@marketingpro',            date:'Apr 24', text:"HighLevel has completely transformed how we manage our clients. The automation alone saves us 10+ hours a week.", sentiment:'positive', likes:142, shares:38 },
+  { id:2, platform:'Reddit',    author:'u/agencyowner_dan',        date:'Apr 23', text:"Switched from HubSpot to HighLevel 6 months ago. Honestly the onboarding was rough but the value is undeniable once you get it set up.", sentiment:'neutral', likes:89, shares:12 },
+  { id:3, platform:'Instagram', author:'@digitalstrategyco',       date:'Apr 22', text:"Our clients are seeing 3x lead conversion with HighLevel funnels. If you're not using this yet, you're leaving money on the table.", sentiment:'positive', likes:310, shares:67 },
+  { id:4, platform:'News',      author:'MarTech Today',            date:'Apr 21', text:"HighLevel continues to challenge legacy CRM platforms with its all-in-one agency suite, attracting over 60,000 agency customers globally.", sentiment:'positive', likes:58, shares:124 },
+  { id:5, platform:'YouTube',   author:'AgencyGrowthPodcast',      date:'Apr 20', text:"Just dropped a 45-min breakdown of HighLevel's new Social Planner. Mixed feelings — the UI needs work but the features are solid.", sentiment:'neutral', likes:234, shares:41 },
+  { id:6, platform:'LinkedIn',  author:'Sarah Chen · Growth Lead', date:'Apr 19', text:"We migrated our entire agency stack to HighLevel Q1 2026. ROI has been incredible — 40% reduction in tool costs and better client retention.", sentiment:'positive', likes:487, shares:93 },
+  { id:7, platform:'Reddit',    author:'u/frustrated_marketer',   date:'Apr 18', text:"HighLevel support has been unresponsive for 3 days. We have a critical automation broken and no one is picking up the ticket.", sentiment:'negative', likes:67, shares:14 },
+  { id:8, platform:'X',         author:'@saas_reviews',           date:'Apr 17', text:"HighLevel pricing is getting out of hand. They keep raising rates while basic UX issues go unfixed for months.", sentiment:'negative', likes:203, shares:89 },
 ]
 
 // ─── Helper components ────────────────────────────────────────────────────────
@@ -224,7 +226,7 @@ function ChartTooltip({ active, payload, label }) {
 
 function SectionHeader({ label }) {
   return (
-    <div className="flex items-center gap-3 mb-3">
+    <div className="flex items-center gap-3 mb-4">
       <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">{label}</span>
       <div className="flex-1 h-px bg-neutral-100" />
     </div>
@@ -345,6 +347,7 @@ export default function TopicDetailPage() {
   const [showDateMenu, setShowDateMenu] = useState(false)
   const [saved, setSaved] = useState(isSavedTopic)
   const [showToast, setShowToast] = useState(false)
+  const [sentimentFilter, setSentimentFilter] = useState('all')
 
   function handleSave() {
     const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
@@ -518,7 +521,7 @@ export default function TopicDetailPage() {
         </div>
 
         {/* ── Body ── */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-8">
+        <div className="flex-1 overflow-y-auto p-6 space-y-10">
 
           {/* ─ KPI Cards ─ */}
           <div className="flex flex-col gap-2">
@@ -558,7 +561,7 @@ export default function TopicDetailPage() {
                     </div>
                   ))}
                 </div>
-                <ResponsiveContainer width="100%" height={160}>
+                <ResponsiveContainer width="100%" height={190}>
                   <AreaChart data={computed.daily} margin={{ top:4, right:4, bottom:0, left:-20 }}>
                     <defs>
                       <linearGradient id="gradPos" x1="0" y1="0" x2="0" y2="1">
@@ -588,7 +591,7 @@ export default function TopicDetailPage() {
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                 <p className="text-[13px] font-semibold text-neutral-900 mb-3">Mentions by platform</p>
-                <ResponsiveContainer width="100%" height={160}>
+                <ResponsiveContainer width="100%" height={190}>
                   <BarChart data={computed.platformData} margin={{ top:4, right:4, bottom:0, left:-20 }}>
                     <CartesianGrid {...gridStyle} vertical={false} />
                     <XAxis dataKey="name" tick={axisStyle} axisLine={false} tickLine={false} />
@@ -610,7 +613,7 @@ export default function TopicDetailPage() {
                     </div>
                   ))}
                 </div>
-                <ResponsiveContainer width="100%" height={160}>
+                <ResponsiveContainer width="100%" height={190}>
                   <ComposedChart data={computed.daily} margin={{ top:4, right:30, bottom:0, left:-20 }}>
                     <CartesianGrid {...gridStyle} />
                     <XAxis dataKey="day" tick={axisStyle} axisLine={false} tickLine={false} />
@@ -637,7 +640,7 @@ export default function TopicDetailPage() {
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                 <p className="text-[13px] font-semibold text-neutral-900 mb-3">Share of voice</p>
-                <ResponsiveContainer width="100%" height={170}>
+                <ResponsiveContainer width="100%" height={200}>
                   <PieChart>
                     <Pie data={computed.platformData.map(p => ({ name: p.name, value: p.mentions, color: p.color }))}
                       cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={2} dataKey="value">
@@ -665,7 +668,7 @@ export default function TopicDetailPage() {
                     </div>
                   ))}
                 </div>
-                <ResponsiveContainer width="100%" height={160}>
+                <ResponsiveContainer width="100%" height={190}>
                   <LineChart data={computed.platformTrends} margin={{ top:4, right:4, bottom:0, left:-20 }}>
                     <CartesianGrid {...gridStyle} />
                     <XAxis dataKey="day" tick={axisStyle} axisLine={false} tickLine={false} />
@@ -686,7 +689,7 @@ export default function TopicDetailPage() {
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                 <p className="text-[13px] font-semibold text-neutral-900 mb-2">Emotion radar</p>
-                <ResponsiveContainer width="100%" height={190}>
+                <ResponsiveContainer width="100%" height={220}>
                   <RadarChart data={computed.emotions} margin={{ top:10, right:20, bottom:10, left:20 }}>
                     <PolarGrid stroke="#E5E7EB" />
                     <PolarAngleAxis dataKey="subject" tick={{ fontSize: 10, fill: '#667085' }} />
@@ -747,7 +750,7 @@ export default function TopicDetailPage() {
             <div className="grid grid-cols-3 gap-4">
               <div className="col-span-2 bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                 <p className="text-[13px] font-semibold text-neutral-900 mb-3">Engagement over time</p>
-                <ResponsiveContainer width="100%" height={150}>
+                <ResponsiveContainer width="100%" height={180}>
                   <AreaChart data={computed.daily} margin={{ top:4, right:4, bottom:0, left:-20 }}>
                     <defs>
                       <linearGradient id="gradEng" x1="0" y1="0" x2="0" y2="1">
@@ -765,7 +768,7 @@ export default function TopicDetailPage() {
               </div>
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                 <p className="text-[13px] font-semibold text-neutral-900 mb-3">Engagement by platform</p>
-                <ResponsiveContainer width="100%" height={150}>
+                <ResponsiveContainer width="100%" height={180}>
                   <BarChart data={computed.platformEngData} layout="vertical" margin={{ top:0, right:8, bottom:0, left:0 }}>
                     <XAxis type="number" tick={axisStyle} axisLine={false} tickLine={false} hide />
                     <YAxis type="category" dataKey="name" tick={axisStyle} axisLine={false} tickLine={false} width={55} />
@@ -828,33 +831,75 @@ export default function TopicDetailPage() {
                 </div>
               </div>
 
-              <div className="col-span-2 bg-white rounded-xl border border-neutral-200 shadow-sm">
-                <div className="px-5 py-3.5 border-b border-neutral-200 flex items-center justify-between">
+              <div className="col-span-2 bg-white rounded-xl border border-neutral-200 shadow-sm p-5 flex flex-col h-full">
+                <div className="flex items-center justify-between mb-3 shrink-0">
                   <p className="text-[13px] font-semibold text-neutral-900">Conversation feed</p>
-                  <span className="text-[11px] text-neutral-400">Showing {computed.posts.length} of {computed.totalMentions.toLocaleString()}</span>
+                  <span className="text-[11px] text-neutral-400">Showing {sentimentFilter === 'all' ? computed.posts.length : computed.posts.filter(p => p.sentiment === sentimentFilter).length} of {computed.totalMentions.toLocaleString()}</span>
                 </div>
-                {computed.posts.length === 0 ? (
-                  <div className="p-8 text-center text-neutral-400 text-[13px]">No posts for selected platforms</div>
-                ) : (
-                  <div className="divide-y divide-neutral-100">
-                    {computed.posts.map(post => (
-                      <div key={post.id} className="px-5 py-3.5 flex gap-3">
-                        <div className="shrink-0 pt-0.5">
-                          <PlatformIcon name={post.platform} size={20} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[12px] font-medium text-neutral-700">{post.author}</span>
-                            <span className="text-[11px] text-neutral-400">{post.date}</span>
-                            <span className={`ml-auto text-[11px] px-2 py-0.5 rounded-full border ${SENTIMENT_BADGE[post.sentiment]}`}>{post.sentiment}</span>
-                          </div>
-                          <p className="text-[13px] text-neutral-600 leading-relaxed">{post.text}</p>
-                          <a href="#" className="inline-flex items-center gap-1 text-[11px] text-hl-blue hover:underline mt-1">View post <ExternalLink size={10} /></a>
+
+                <div className="flex items-center gap-1.5 mb-4 flex-wrap shrink-0">
+                  {[
+                    { key:'all',      label:'All',      dot:null },
+                    { key:'positive', label:'Positive', dot:'bg-positive' },
+                    { key:'neutral',  label:'Neutral',  dot:'bg-neutral-400' },
+                    { key:'negative', label:'Negative', dot:'bg-negative' },
+                  ].map(chip => {
+                    const count = chip.key === 'all' ? computed.posts.length : computed.posts.filter(p => p.sentiment === chip.key).length
+                    const active = sentimentFilter === chip.key
+                    return (
+                      <button
+                        key={chip.key}
+                        onClick={() => setSentimentFilter(chip.key)}
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
+                          active ? 'bg-hl-blue-light text-hl-blue border border-[#C7D7FD]' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200 border border-transparent'
+                        }`}
+                      >
+                        {chip.dot && <div className={`w-1.5 h-1.5 rounded-full ${chip.dot}`} />}
+                        {chip.label}
+                        <span className={`text-[10px] ${active ? 'text-hl-blue/70' : 'text-neutral-400'}`}>{count}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {(() => {
+                  const filteredPosts = sentimentFilter === 'all' ? computed.posts : computed.posts.filter(p => p.sentiment === sentimentFilter)
+                  if (filteredPosts.length === 0) {
+                    return <div className="flex-1 flex items-center justify-center text-neutral-400 text-[13px] py-8">No posts match this filter</div>
+                  }
+                  return (
+                    <div className="relative flex-1 min-h-0">
+                      <div className="absolute inset-0 overflow-y-auto pr-1 [scrollbar-width:thin] [scrollbar-color:#E4E7EC_transparent]">
+                        <div className="grid grid-cols-2 gap-2.5 auto-rows-min pb-6">
+                          {filteredPosts.map(post => {
+                            const stripColor = post.sentiment === 'positive' ? 'bg-positive' : post.sentiment === 'negative' ? 'bg-negative' : 'bg-neutral-300'
+                            return (
+                              <div key={post.id} className="relative bg-white rounded-lg border border-neutral-100 hover:border-neutral-200 hover:shadow-sm transition-all overflow-hidden flex flex-col">
+                                <div className={`absolute left-0 top-0 bottom-0 w-1 ${stripColor}`} />
+                                <div className="pl-3.5 pr-3 py-2.5 flex flex-col flex-1">
+                                  <div className="flex items-center gap-1.5 mb-1.5">
+                                    <PlatformIcon name={post.platform} size={16} />
+                                    <span className="text-[11.5px] font-medium text-neutral-700 truncate">{post.author}</span>
+                                    <span className="text-[10px] text-neutral-300">·</span>
+                                    <span className="text-[10px] text-neutral-400 shrink-0">{post.date}</span>
+                                    <span className={`ml-auto text-[9px] px-1.5 py-0.5 rounded-full border capitalize ${SENTIMENT_BADGE[post.sentiment]}`}>{post.sentiment}</span>
+                                  </div>
+                                  <p className="text-[12px] text-neutral-600 leading-relaxed mb-2 flex-1">{post.text}</p>
+                                  <div className="flex items-center gap-2.5 pt-1.5 border-t border-neutral-50">
+                                    <span className="flex items-center gap-1 text-[10px] text-neutral-400"><Heart size={10} />{post.likes.toLocaleString()}</span>
+                                    <span className="flex items-center gap-1 text-[10px] text-neutral-400"><Repeat2 size={10} />{post.shares}</span>
+                                    <a href="#" className="ml-auto flex items-center gap-1 text-[10px] text-hl-blue hover:underline">View <ExternalLink size={9} /></a>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          })}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+                      <div className="absolute bottom-0 left-0 right-1 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none rounded-b-xl" />
+                    </div>
+                  )
+                })()}
               </div>
             </div>
           </div>
@@ -865,7 +910,7 @@ export default function TopicDetailPage() {
             <div className="grid grid-cols-4 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                 <p className="text-[13px] font-semibold text-neutral-900 mb-3">Language</p>
-                <ResponsiveContainer width="100%" height={150}>
+                <ResponsiveContainer width="100%" height={180}>
                   <BarChart data={AUDIENCE_LANGUAGE} layout="vertical" margin={{ top:0, right:24, bottom:0, left:0 }}>
                     <XAxis type="number" hide />
                     <YAxis type="category" dataKey="name" tick={axisStyle} axisLine={false} tickLine={false} width={62} />
@@ -876,7 +921,7 @@ export default function TopicDetailPage() {
               </div>
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                 <p className="text-[13px] font-semibold text-neutral-900 mb-2">Gender</p>
-                <ResponsiveContainer width="100%" height={140}>
+                <ResponsiveContainer width="100%" height={165}>
                   <PieChart>
                     <Pie data={AUDIENCE_GENDER} cx="50%" cy="50%" innerRadius={38} outerRadius={58} paddingAngle={2} dataKey="value">
                       {AUDIENCE_GENDER.map((g, i) => <Cell key={i} fill={g.color} />)}
@@ -895,7 +940,7 @@ export default function TopicDetailPage() {
               </div>
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                 <p className="text-[13px] font-semibold text-neutral-900 mb-3">Age distribution</p>
-                <ResponsiveContainer width="100%" height={150}>
+                <ResponsiveContainer width="100%" height={180}>
                   <BarChart data={AUDIENCE_AGE} layout="vertical" margin={{ top:0, right:24, bottom:0, left:0 }}>
                     <XAxis type="number" hide />
                     <YAxis type="category" dataKey="name" tick={axisStyle} axisLine={false} tickLine={false} width={38} />
