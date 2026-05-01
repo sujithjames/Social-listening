@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Trash2, TrendingUp, RefreshCw, ChevronDown, Calendar, Globe, Tag, AtSign } from 'lucide-react'
 import CreateTopicModal from '../components/CreateTopicModal'
@@ -80,6 +80,33 @@ const WIKIPEDIA_TRENDS = [
 ]
 
 const REGIONS = ['Global', 'United States', 'India', 'United Kingdom', 'Brazil', 'Australia', 'Canada']
+
+const SEARCH_SUGGESTIONS = [
+  { query: 'HighLevel',              mentions: 1248, sentiment: 68 },
+  { query: 'HighLevel CRM',          mentions: 843,  sentiment: 61 },
+  { query: 'HighLevel vs HubSpot',   mentions: 512,  sentiment: 54 },
+  { query: '#GoHighLevel',           mentions: 389,  sentiment: 72 },
+  { query: 'GoHighLevel',            mentions: 756,  sentiment: 74 },
+  { query: 'email marketing',        mentions: 2340, sentiment: 61 },
+  { query: 'email automation',       mentions: 1120, sentiment: 63 },
+  { query: 'marketing automation',   mentions: 1876, sentiment: 58 },
+  { query: 'CRM software',           mentions: 3210, sentiment: 55 },
+  { query: 'CRM for agencies',       mentions: 487,  sentiment: 67 },
+  { query: 'agency software',        mentions: 987,  sentiment: 63 },
+  { query: 'agency growth',          mentions: 891,  sentiment: 76 },
+  { query: 'sales funnel',           mentions: 1543, sentiment: 67 },
+  { query: 'funnel builder',         mentions: 634,  sentiment: 65 },
+  { query: 'lead generation',        mentions: 2108, sentiment: 62 },
+  { query: 'social media marketing', mentions: 4521, sentiment: 71 },
+  { query: 'white label CRM',        mentions: 423,  sentiment: 69 },
+  { query: 'HubSpot',                mentions: 5832, sentiment: 59 },
+  { query: 'HubSpot vs Salesforce',  mentions: 1204, sentiment: 52 },
+  { query: 'Salesforce',             mentions: 7241, sentiment: 57 },
+  { query: '#SaaS',                  mentions: 8903, sentiment: 64 },
+  { query: '#MarketingAutomation',   mentions: 2341, sentiment: 66 },
+  { query: '#AgencyLife',            mentions: 1876, sentiment: 78 },
+  { query: '#EmailMarketing',        mentions: 3102, sentiment: 69 },
+]
 
 
 const RANK_STYLE = {
@@ -218,11 +245,27 @@ export default function SearchPage() {
   const [showModal, setShowModal] = useState(false)
   const [trackDefault, setTrackDefault] = useState('')
   const [topics, setTopics] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const searchRef = useRef(null)
   const navigate = useNavigate()
 
   useEffect(() => {
     setTopics(loadTopicsFromStorage())
   }, [])
+
+  useEffect(() => {
+    function handleMouseDown(e) {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [])
+
+  const suggestions = query.trim()
+    ? SEARCH_SUGGESTIONS.filter(s => s.query.toLowerCase().includes(query.toLowerCase())).slice(0, 5)
+    : []
 
   function handleSearch(e) {
     e.preventDefault()
@@ -294,7 +337,7 @@ export default function SearchPage() {
         <div className="px-5 pb-5 flex flex-col gap-1.5">
           <label className="text-[14px] font-medium text-gray-700">Explore</label>
           <form onSubmit={handleSearch} className="flex items-center gap-2.5">
-            <div className="relative flex-1">
+            <div className="relative flex-1" ref={searchRef}>
               <Search
                 size={15}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -302,10 +345,34 @@ export default function SearchPage() {
               <input
                 type="text"
                 value={query}
-                onChange={e => setQuery(e.target.value)}
+                onChange={e => { setQuery(e.target.value); setShowSuggestions(true) }}
+                onFocus={() => setShowSuggestions(true)}
                 placeholder="Search any keywords, brand or hashtags"
                 className="w-full pl-9 pr-4 h-9 rounded-md border border-gray-300 bg-white text-[14px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-hl-blue shadow-[0px_1px_2px_rgba(16,24,40,0.05)] transition-all"
               />
+              {showSuggestions && suggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1.5 bg-white border border-gray-200 rounded-xl shadow-lg z-30 overflow-hidden">
+                  {suggestions.map(s => {
+                    const sentimentColor = s.sentiment >= 65 ? 'text-positive' : s.sentiment >= 55 ? 'text-warning' : 'text-negative'
+                    const dotColor = s.sentiment >= 65 ? 'bg-positive' : s.sentiment >= 55 ? 'bg-warning' : 'bg-negative'
+                    return (
+                      <div
+                        key={s.query}
+                        onMouseDown={() => { navigate('/topic-detail', { state: { query: s.query } }); setShowSuggestions(false) }}
+                        className="flex items-center gap-2.5 px-3 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50 last:border-0"
+                      >
+                        <Search size={12} className="text-gray-300 shrink-0" />
+                        <span className="flex-1 text-[13px] text-gray-700">{s.query}</span>
+                        <span className="text-[11px] text-gray-400">{s.mentions.toLocaleString()} mentions</span>
+                        <div className={`flex items-center gap-1 text-[11px] font-semibold ${sentimentColor}`}>
+                          <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+                          {s.sentiment}%
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
             <button
               type="submit"
@@ -409,6 +476,7 @@ export default function SearchPage() {
                     {TRENDING_DATA.map(trend => (
                       <div
                         key={trend.id}
+                        onClick={() => navigate('/topic-detail', { state: { query: trend.hashtag } })}
                         className="w-[200px] shrink-0 bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-2.5 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer"
                         style={{ scrollSnapAlign: 'start' }}
                       >
