@@ -186,5 +186,5 @@ When a new design decision is confirmed (new token, new pattern, new frozen comp
 
 | Hash | Friendly Name | Feature | Restore |
 |------|--------------|---------|---------|
-| `db39b8e` | Social Listening 1.7 | Shell polish — Sidebar + TopBar fixed positioning, collapse toggle unclipped, tab indicators correct, sidebar nav sentence-cased | `git reset --hard db39b8e` |
 | `76d77f2` | Social Listening 1.8 | Conversation feed redesign — filterable 2-col card grid with sentiment strips, internal scroll with gradient fade, chart heights +30px, section spacing increased | `git reset --hard 76d77f2` |
+| `71b5bb9` | Social Listening 1.9 | Search autocomplete dropdown with mention count + sentiment per result, trending cards navigate to detail, mock post copy softened | `git reset --hard 71b5bb9` |
