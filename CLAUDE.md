@@ -186,5 +186,5 @@ When a new design decision is confirmed (new token, new pattern, new frozen comp
 
 | Hash | Friendly Name | Feature | Restore |
 |------|--------------|---------|---------|
-| `bcf719b` | Social Listening 1.6 | Detail page full rebuild — Recharts interactive charts, multi-select platform chips, activity heatmap, emotion radar, engagement stats, audience insights, trending topics/hashtags, Beta tag in TopBar | `git reset --hard bcf719b` |
 | `db39b8e` | Social Listening 1.7 | Shell polish — Sidebar + TopBar fixed positioning, collapse toggle unclipped, tab indicators correct, sidebar nav sentence-cased | `git reset --hard db39b8e` |
+| `76d77f2` | Social Listening 1.8 | Conversation feed redesign — filterable 2-col card grid with sentiment strips, internal scroll with gradient fade, chart heights +30px, section spacing increased | `git reset --hard 76d77f2` |
