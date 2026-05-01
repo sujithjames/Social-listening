@@ -145,13 +145,13 @@ const AUDIENCE_LOCATIONS = [
 
 const MOCK_POSTS = [
   { id:1, platform:'X',         author:'@marketingpro',            date:'Apr 24', text:"HighLevel has completely transformed how we manage our clients. The automation alone saves us 10+ hours a week.", sentiment:'positive', likes:142, shares:38 },
-  { id:2, platform:'Reddit',    author:'u/agencyowner_dan',        date:'Apr 23', text:"Switched from HubSpot to HighLevel 6 months ago. Honestly the onboarding was rough but the value is undeniable once you get it set up.", sentiment:'neutral', likes:89, shares:12 },
+  { id:2, platform:'Reddit',    author:'u/agencyowner_dan',        date:'Apr 23', text:"Still evaluating HighLevel for our agency. Trial has been solid — just want to confirm it integrates cleanly with a few niche tools before we fully commit.", sentiment:'neutral', likes:89, shares:12 },
   { id:3, platform:'Instagram', author:'@digitalstrategyco',       date:'Apr 22', text:"Our clients are seeing 3x lead conversion with HighLevel funnels. If you're not using this yet, you're leaving money on the table.", sentiment:'positive', likes:310, shares:67 },
   { id:4, platform:'News',      author:'MarTech Today',            date:'Apr 21', text:"HighLevel continues to challenge legacy CRM platforms with its all-in-one agency suite, attracting over 60,000 agency customers globally.", sentiment:'positive', likes:58, shares:124 },
-  { id:5, platform:'YouTube',   author:'AgencyGrowthPodcast',      date:'Apr 20', text:"Just dropped a 45-min breakdown of HighLevel's new Social Planner. Mixed feelings — the UI needs work but the features are solid.", sentiment:'neutral', likes:234, shares:41 },
+  { id:5, platform:'YouTube',   author:'AgencyGrowthPodcast',      date:'Apr 20', text:"Covered HighLevel's Social Planner in this week's episode. Solid feature set overall — the learning curve is real when migrating from another platform, but worth it.", sentiment:'neutral', likes:234, shares:41 },
   { id:6, platform:'LinkedIn',  author:'Sarah Chen · Growth Lead', date:'Apr 19', text:"We migrated our entire agency stack to HighLevel Q1 2026. ROI has been incredible — 40% reduction in tool costs and better client retention.", sentiment:'positive', likes:487, shares:93 },
-  { id:7, platform:'Reddit',    author:'u/frustrated_marketer',   date:'Apr 18', text:"HighLevel support has been unresponsive for 3 days. We have a critical automation broken and no one is picking up the ticket.", sentiment:'negative', likes:67, shares:14 },
-  { id:8, platform:'X',         author:'@saas_reviews',           date:'Apr 17', text:"HighLevel pricing is getting out of hand. They keep raising rates while basic UX issues go unfixed for months.", sentiment:'negative', likes:203, shares:89 },
+  { id:7, platform:'Reddit',    author:'u/agencystack_explorer',  date:'Apr 18', text:"Wish HighLevel had more native integrations with some niche tools we use. Zapier fills the gap but adds to the monthly stack cost.", sentiment:'negative', likes:67, shares:14 },
+  { id:8, platform:'X',         author:'@agencymarketers',        date:'Apr 17', text:"Would love more granular reporting in HighLevel. Some analytics feel a bit high-level for deeper campaign analysis. Hoping to see this evolve.", sentiment:'negative', likes:203, shares:89 },
 ]
 
 // ─── Helper components ────────────────────────────────────────────────────────
