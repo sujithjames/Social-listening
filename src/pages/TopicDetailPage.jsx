@@ -451,7 +451,7 @@ export default function TopicDetailPage() {
       <div className="bg-white rounded-xl shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.08),0px_4px_6px_-2px_rgba(16,24,40,0.03)] flex flex-col flex-1 overflow-hidden">
 
         {/* ── Toolbar ── */}
-        <div className="border-b border-neutral-200 px-5 py-2.5 flex items-center gap-3 shrink-0">
+        <div className="border-b border-neutral-200 px-8 py-2.5 flex items-center gap-3 shrink-0">
           <button
             onClick={() => navigate('/search')}
             className="flex items-center gap-1.5 text-[13px] text-neutral-500 hover:text-neutral-800 transition-colors shrink-0"
@@ -521,7 +521,7 @@ export default function TopicDetailPage() {
         </div>
 
         {/* ── Body ── */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-10">
+        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-10">
 
           {/* ─ KPI Cards ─ */}
           <div className="flex flex-col gap-2">

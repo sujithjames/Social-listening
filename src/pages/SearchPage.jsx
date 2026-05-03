@@ -308,7 +308,7 @@ export default function SearchPage() {
       <div className="bg-white rounded-xl shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.08),0px_4px_6px_-2px_rgba(16,24,40,0.03)] flex flex-col flex-1 overflow-hidden">
 
         {/* ── Header: toggle tabs + stats ── */}
-        <div className="flex items-center justify-between px-5 py-4">
+        <div className="flex items-center justify-between px-8 py-4">
           <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
             {['Topic', 'Social trends'].map(tab => (
               <button
@@ -334,7 +334,7 @@ export default function SearchPage() {
         </div>
 
         {/* ── Search section ── */}
-        <div className="px-5 pb-5 flex flex-col gap-1.5">
+        <div className="px-8 pb-5 flex flex-col gap-1.5">
           <label className="text-[14px] font-medium text-gray-700">Explore</label>
           <form onSubmit={handleSearch} className="flex items-center gap-2.5">
             <div className="relative flex-1" ref={searchRef}>
@@ -389,7 +389,7 @@ export default function SearchPage() {
 
         {/* ── Tab content ── */}
         {activeTab === 'Topic' ? (
-          <div className="flex-1 overflow-y-auto px-5 pb-5">
+          <div className="flex-1 overflow-y-auto px-8 pb-5">
             <div className="flex flex-col gap-5">
 
               {topics.length === 0 ? (
@@ -745,7 +745,7 @@ function TrendColumn({ title, avatar, accentColor, items, onTrack }) {
 
 function SocialTrendsTab({ onTrack }) {
   return (
-    <div className="flex-1 overflow-y-auto px-5 pb-5 flex flex-col gap-4">
+    <div className="flex-1 overflow-y-auto px-8 pb-5 flex flex-col gap-4">
       <div className="flex items-center justify-between pt-1">
         <RegionPicker />
         <div className="flex items-center gap-2">
