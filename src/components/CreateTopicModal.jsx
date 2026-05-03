@@ -81,7 +81,7 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
             <div className="px-7 pt-6 pb-5 border-b border-gray-100 shrink-0">
               <div className="flex items-start justify-between">
                 <div>
-                  <h2 className="text-[22px] font-bold text-gray-900 leading-tight">Create a listening topic</h2>
+                  <h2 className="text-[16px] font-semibold text-gray-900 leading-tight">Create a listening topic</h2>
                   <p className="text-[14px] text-gray-500 mt-1">Define what conversations you'd like to monitor across the web.</p>
                 </div>
                 <button
@@ -101,7 +101,7 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
                     {step > 1 ? <Check size={14} strokeWidth={3} /> : '1'}
                   </div>
                   <div>
-                    <p className="text-[15px] font-semibold text-gray-900 leading-tight">Name & sources</p>
+                    <p className="text-[14px] font-semibold text-gray-900 leading-tight">Name & sources</p>
                     <p className="text-[13px] text-gray-500 leading-tight mt-1">Choose a title and platforms to track</p>
                   </div>
                 </div>
@@ -117,7 +117,7 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
                     2
                   </div>
                   <div>
-                    <p className={`text-[15px] font-semibold leading-tight ${step >= 2 ? 'text-gray-900' : 'text-gray-500'}`}>Keywords & filters</p>
+                    <p className={`text-[14px] font-semibold leading-tight ${step >= 2 ? 'text-gray-900' : 'text-gray-500'}`}>Keywords & filters</p>
                     <p className={`text-[13px] leading-tight mt-1 ${step >= 2 ? 'text-gray-500' : 'text-gray-400'}`}>Set keywords and refine your results</p>
                   </div>
                 </div>
@@ -168,13 +168,13 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
           {step === 2 && (
             <div className="px-6 py-5 flex flex-col gap-5">
               {/* Topic preview pill */}
-              <div className="flex items-center gap-3 px-3 py-2.5 bg-hl-blue-light rounded-xl border border-[#C7D7FD]">
+              <div className="flex items-center gap-3 px-3 py-2.5 bg-hl-blue-light rounded-xl border border-hl-blue-border">
                 <div className="w-7 h-7 rounded-lg bg-hl-blue flex items-center justify-center shrink-0">
                   <Hash size={13} className="text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-semibold text-[#004EEB] truncate">{title}</p>
-                  <p className="text-[11px] text-gray-500">{selectedSources.length} source{selectedSources.length !== 1 ? 's' : ''} selected</p>
+                  <p className="text-[13px] font-semibold text-primary-700 truncate">{title}</p>
+                  <p className="text-[12px] text-gray-500">{selectedSources.length} source{selectedSources.length !== 1 ? 's' : ''} selected</p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                   {selectedSources.slice(0, 4).map(id => {
@@ -183,13 +183,13 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
                     const Icon = s.icon
                     return (
                       <div key={id} className="w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: s.bg }}>
-                        {Icon ? <Icon size={10} style={{ color: s.color }} /> : <span className="text-[8px] font-bold" style={{ color: s.color }}>{s.letter}</span>}
+                        {Icon ? <Icon size={10} style={{ color: s.color }} /> : <span className="text-[10px] font-semibold" style={{ color: s.color }}>{s.letter}</span>}
                       </div>
                     )
                   })}
                   {selectedSources.length > 4 && (
                     <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
-                      <span className="text-[8px] font-bold text-gray-500">+{selectedSources.length - 4}</span>
+                      <span className="text-[10px] font-semibold text-gray-500">+{selectedSources.length - 4}</span>
                     </div>
                   )}
                 </div>
@@ -234,7 +234,7 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
                       onClick={() => toggleNoise(f)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[13px] font-medium transition-all duration-150 ${
                         noiseFilters.includes(f)
-                          ? 'bg-hl-blue-light border-hl-blue text-[#004EEB]'
+                          ? 'bg-hl-blue-light border-hl-blue text-primary-700'
                           : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                       }`}
                     >
@@ -308,7 +308,7 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
 
               {/* Copy */}
               <div className="text-center flex flex-col gap-2">
-                <p className="text-[20px] font-semibold text-gray-900">Setting up "{title}"</p>
+                <p className="text-[16px] font-semibold text-gray-900">Setting up "{title}"</p>
                 <p className="text-[14px] text-gray-500 transition-all duration-300" style={{ minHeight: 20 }}>
                   {SETUP_MESSAGES[msgIndex]}
                 </p>
@@ -339,14 +339,6 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
             </button>
 
             <div className="flex items-center gap-3">
-              {step === 2 && (
-                <button
-                  onClick={onClose}
-                  className="h-9 px-4 rounded-md border border-gray-300 bg-white text-[14px] font-semibold text-gray-700 hover:bg-gray-50 shadow-[0px_1px_2px_rgba(16,24,40,0.05)] transition-colors"
-                >
-                  Cancel
-                </button>
-              )}
               <button
                 onClick={() => step === 1 ? setStep(2) : setStep(3)}
                 disabled={step === 1 ? !step1Valid : !step2Valid}

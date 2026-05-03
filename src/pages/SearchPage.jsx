@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useId } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Trash2, TrendingUp, RefreshCw, ChevronDown, Calendar, Globe, Tag, AtSign } from 'lucide-react'
 import { siReddit } from 'simple-icons'
@@ -219,7 +219,8 @@ function PlatformIcon({ platform, size = 32 }) {
 
 
 function Sparkline({ path }) {
-  const id = `grad-${Math.random().toString(36).slice(2)}`
+  const uid = useId()
+  const id = `grad-${uid.replace(/:/g, '')}`
   return (
     <svg viewBox="0 0 120 32" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-10">
       <defs>
@@ -321,7 +322,7 @@ export default function SearchPage() {
                 onClick={() => setActiveTab(tab)}
                 className={`px-4 py-1.5 rounded-md text-[14px] transition-all duration-150 ${
                   activeTab === tab
-                    ? 'bg-white text-[#004EEB] font-semibold shadow-sm'
+                    ? 'bg-white text-primary-700 font-semibold shadow-sm'
                     : 'text-gray-500 font-medium hover:text-gray-700'
                 }`}
               >
@@ -368,8 +369,8 @@ export default function SearchPage() {
                       >
                         <Search size={12} className="text-gray-300 shrink-0" />
                         <span className="flex-1 text-[13px] text-gray-700">{s.query}</span>
-                        <span className="text-[11px] text-gray-400">{s.mentions.toLocaleString()} mentions</span>
-                        <div className={`flex items-center gap-1 text-[11px] font-semibold ${sentimentColor}`}>
+                        <span className="text-[12px] text-gray-400">{s.mentions.toLocaleString()} mentions</span>
+                        <div className={`flex items-center gap-1 text-[12px] font-semibold ${sentimentColor}`}>
                           <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
                           {s.sentiment}%
                         </div>
@@ -382,7 +383,7 @@ export default function SearchPage() {
             <button
               type="submit"
               disabled={!query.trim()}
-              className="h-9 px-5 rounded-lg bg-[#00359E] border border-hl-blue text-white text-[14px] font-semibold hover:bg-hl-blue transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+              className="h-9 px-5 rounded-lg bg-hl-blue border border-hl-blue text-white text-[14px] font-semibold hover:bg-hl-blue-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
             >
               Search
             </button>
@@ -409,7 +410,7 @@ export default function SearchPage() {
                   </div>
                   <button
                     onClick={() => setShowModal(true)}
-                    className="flex items-center gap-1.5 h-9 px-5 rounded-lg border border-[#84ADFF] bg-white text-[13px] font-semibold text-[#004EEB] hover:bg-hl-blue-light transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+                    className="flex items-center gap-1.5 h-9 px-5 rounded-lg border border-hl-blue-border bg-white text-[13px] font-semibold text-primary-700 hover:bg-hl-blue-light transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
                   >
                     <Plus size={13} />
                     Create topic
@@ -420,14 +421,14 @@ export default function SearchPage() {
                 <div className="space-y-4 pt-2">
                   <div className="flex items-end justify-between">
                     <div>
-                      <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Your listening topics</p>
+                      <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Your listening topics</p>
                       <p className="text-[16px] font-semibold text-gray-900">
                         {topics.length} active {topics.length === 1 ? 'topic' : 'topics'}
                       </p>
                     </div>
                     <button
                       onClick={() => setShowModal(true)}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded border border-[#84ADFF] bg-white text-[13px] font-semibold text-[#004EEB] hover:bg-hl-blue-light transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)] shrink-0"
+                      className="flex items-center gap-1.5 h-8 px-3 rounded border border-hl-blue-border bg-white text-[13px] font-semibold text-primary-700 hover:bg-hl-blue-light transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)] shrink-0"
                     >
                       <Plus size={13} />
                       Create topic
@@ -438,15 +439,15 @@ export default function SearchPage() {
                   <div className="grid grid-cols-3 gap-3">
                     <div className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
                       <p className="text-[12px] text-gray-500 font-medium mb-1">Total mentions</p>
-                      <p className="text-[20px] font-bold text-gray-900">{totalMentions.toLocaleString()}</p>
+                      <p className="text-[24px] font-semibold text-gray-900">{totalMentions.toLocaleString()}</p>
                     </div>
                     <div className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
                       <p className="text-[12px] text-gray-500 font-medium mb-1">Avg sentiment</p>
-                      <p className="text-[20px] font-bold text-positive">{avgSentiment}%</p>
+                      <p className="text-[24px] font-semibold text-positive">{avgSentiment}%</p>
                     </div>
                     <div className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
                       <p className="text-[12px] text-gray-500 font-medium mb-1">Active topics</p>
-                      <p className="text-[20px] font-bold text-gray-900">{topics.length}</p>
+                      <p className="text-[24px] font-semibold text-gray-900">{topics.length}</p>
                     </div>
                   </div>
 
@@ -468,7 +469,7 @@ export default function SearchPage() {
               <div className="border-t border-gray-100 pt-5 space-y-4 pb-2">
                 <div className="flex items-end justify-between">
                   <div>
-                    <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-1">What's trending elsewhere</p>
+                    <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest mb-1">What's trending elsewhere</p>
                     <p className="text-[16px] font-semibold text-gray-900">A peek at what's trending right now</p>
                   </div>
                   <button onClick={() => setActiveTab('Social trends')} className="text-[13px] font-semibold text-hl-blue hover:underline flex items-center gap-1">
@@ -486,7 +487,7 @@ export default function SearchPage() {
                         style={{ scrollSnapAlign: 'start' }}
                       >
                         <div>
-                          <p className="text-[17px] font-bold text-gray-900 leading-tight">{trend.hashtag}</p>
+                          <p className="text-[16px] font-semibold text-gray-900 leading-tight">{trend.hashtag}</p>
                           <p className="text-[12px] text-gray-400 mt-0.5">{trend.context}</p>
                         </div>
                         <div className="flex items-center justify-between pt-1.5 border-t border-gray-100">
@@ -537,9 +538,9 @@ function TopicCard({ topic, onDelete, onClick }) {
 
       {/* Tracking keywords */}
       <div className="flex items-center gap-1.5 flex-wrap">
-        <span className="text-[11px] text-gray-400 font-medium">Tracking</span>
+        <span className="text-[12px] text-gray-400 font-medium">Tracking</span>
         {(Array.isArray(topic.keywords) && topic.keywords.length > 0 ? topic.keywords : [topic.name]).slice(0, 3).map((kw, i) => (
-          <span key={i} className="text-[11px] font-medium text-hl-blue bg-hl-blue-light px-2 py-0.5 rounded-full">
+          <span key={i} className="text-[12px] font-medium text-hl-blue bg-hl-blue-light px-2 py-0.5 rounded-full">
             {kw}
           </span>
         ))}
@@ -563,18 +564,18 @@ function TopicCard({ topic, onDelete, onClick }) {
       {/* Stats row */}
       <div className="flex items-center pt-2 border-t border-gray-100 mt-auto">
         <div className="flex-1">
-          <p className="text-[14px] font-bold text-gray-900">{topic.mentions.toLocaleString()}</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">Mentions</p>
+          <p className="text-[14px] font-semibold text-gray-900">{topic.mentions.toLocaleString()}</p>
+          <p className="text-[12px] text-gray-400 mt-0.5">Mentions</p>
         </div>
         <div className="w-px h-7 bg-gray-100 mx-2.5" />
         <div className="flex-1">
-          <p className="text-[14px] font-bold text-gray-900">{topic.sentiment}</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">Sentiment</p>
+          <p className="text-[14px] font-semibold text-gray-900">{topic.sentiment}</p>
+          <p className="text-[12px] text-gray-400 mt-0.5">Sentiment</p>
         </div>
         <div className="w-px h-7 bg-gray-100 mx-2.5" />
         <div className="flex-1">
-          <p className="text-[14px] font-bold text-gray-900">{topic.sources.length}</p>
-          <p className="text-[11px] text-gray-400 mt-0.5">Source{topic.sources.length !== 1 ? 's' : ''}</p>
+          <p className="text-[14px] font-semibold text-gray-900">{topic.sources.length}</p>
+          <p className="text-[12px] text-gray-400 mt-0.5">Source{topic.sources.length !== 1 ? 's' : ''}</p>
         </div>
       </div>
     </div>
@@ -587,7 +588,7 @@ function SourceIcon({ src }) {
   return (
     <div
       title={label}
-      className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+      className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[12px] font-semibold shrink-0"
       style={{ background: color }}
     >
       {label[0]}
@@ -665,7 +666,7 @@ function RegionPicker() {
                 }`}
               >
                 {r}
-                {region === r && <span className="text-hl-blue text-[11px]">✓</span>}
+                {region === r && <span className="text-hl-blue text-[12px]">✓</span>}
               </button>
             ))}
           </div>
@@ -682,7 +683,7 @@ function TrendThumbnail({ type, color }) {
       style={{ background: `${color}22` }}
     >
       {type === 'hashtag' ? (
-        <span className="text-[17px] font-black leading-none" style={{ color }}>#</span>
+        <span className="text-[14px] font-semibold leading-none" style={{ color }}>#</span>
       ) : type === 'brand' ? (
         <AtSign size={15} style={{ color }} strokeWidth={1.8} />
       ) : (
@@ -710,28 +711,28 @@ function TrendColumn({ title, logo, accentColor, items, onTrack }) {
           const medal = RANK_STYLE[item.rank]
           return (
             <div key={item.rank} className="group flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer">
-              <span className={`text-[11px] font-bold w-5 h-5 flex items-center justify-center rounded-full shrink-0 ${medal ? `${medal.text} ${medal.bg}` : 'text-gray-400'}`}>
+              <span className={`text-[12px] font-semibold w-5 h-5 flex items-center justify-center rounded-full shrink-0 ${medal ? `${medal.text} ${medal.bg}` : 'text-gray-400'}`}>
                 {item.rank}
               </span>
               <TrendThumbnail type={item.type} color={item.color} />
               <div className="flex-1 min-w-0">
                 <p className="text-[13px] font-medium text-gray-900 truncate">{item.name}</p>
-                <p className="text-[11px] text-gray-400 mt-0.5">{item.metric}</p>
+                <p className="text-[12px] text-gray-400 mt-0.5">{item.metric}</p>
               </div>
               <div className="shrink-0 w-16 flex items-center justify-end">
                 <button
                   onClick={e => { e.stopPropagation(); onTrack(item.name) }}
-                  className="hidden group-hover:flex items-center gap-0.5 text-[11px] font-semibold text-hl-blue bg-hl-blue-light hover:bg-blue-100 px-2 py-1 rounded-md transition-colors"
+                  className="hidden group-hover:flex items-center gap-0.5 text-[12px] font-semibold text-hl-blue bg-hl-blue-light hover:bg-blue-100 px-2 py-1 rounded-md transition-colors"
                 >
                   + Track
                 </button>
                 <div className="flex group-hover:hidden items-center gap-1">
                   {item.isNew ? (
-                    <span className="text-[11px] font-semibold text-green-600 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-md">New</span>
+                    <span className="text-[12px] font-semibold text-green-600 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-md">New</span>
                   ) : (
                     <>
                       <TrendingUp size={12} className="text-green-500" />
-                      {item.change && <span className="text-[11px] font-semibold text-green-600">{item.change}</span>}
+                      {item.change && <span className="text-[12px] font-semibold text-green-600">{item.change}</span>}
                     </>
                   )}
                 </div>
@@ -762,7 +763,7 @@ function SocialTrendsTab({ onTrack }) {
       </div>
 
       <div className="flex items-baseline justify-between">
-        <p className="text-[20px] font-semibold text-gray-900">Social trends</p>
+        <p className="text-[16px] font-semibold text-gray-900">Social trends</p>
         <p className="text-[12px] text-gray-400">Updated just now</p>
       </div>
 

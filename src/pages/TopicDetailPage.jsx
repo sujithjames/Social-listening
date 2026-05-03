@@ -210,14 +210,14 @@ function ChartTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
   return (
     <div className="bg-white border border-neutral-200 rounded-lg shadow-lg px-3 py-2 text-[12px] min-w-[130px]">
-      <p className="font-semibold text-neutral-600 mb-1.5 text-[11px]">{label}</p>
+      <p className="font-semibold text-neutral-600 mb-1.5 text-[12px]">{label}</p>
       {payload.map((p, i) => (
         <div key={i} className="flex items-center justify-between gap-3 mb-0.5">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full shrink-0" style={{ background: p.color ?? p.fill ?? '#155EEF' }} />
-            <span className="text-[11px] text-neutral-500 capitalize">{p.name}</span>
+            <span className="text-[12px] text-neutral-500 capitalize">{p.name}</span>
           </div>
-          <span className="text-[11px] font-semibold text-neutral-800">{typeof p.value === 'number' ? p.value.toLocaleString() : p.value}</span>
+          <span className="text-[12px] font-semibold text-neutral-800">{typeof p.value === 'number' ? p.value.toLocaleString() : p.value}</span>
         </div>
       ))}
     </div>
@@ -227,7 +227,7 @@ function ChartTooltip({ active, payload, label }) {
 function SectionHeader({ label }) {
   return (
     <div className="flex items-center gap-3 mb-4">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">{label}</span>
+      <span className="text-[12px] font-semibold uppercase tracking-wider text-neutral-400">{label}</span>
       <div className="flex-1 h-px bg-neutral-100" />
     </div>
   )
@@ -242,7 +242,7 @@ function ActivityHeatmap({ data }) {
         <div className="flex flex-col gap-[3px]" style={{ paddingTop: 20 }}>
           {DAY_LABELS.map(d => (
             <div key={d} className="h-4 flex items-center justify-end">
-              <span className="text-[9px] text-neutral-400 w-6">{d}</span>
+              <span className="text-[10px] text-neutral-400 w-6">{d}</span>
             </div>
           ))}
         </div>
@@ -250,7 +250,7 @@ function ActivityHeatmap({ data }) {
           <div className="flex mb-1">
             {Array.from({ length: 24 }, (_, h) => (
               <div key={h} className="flex-1 flex justify-center">
-                {h % 6 === 0 && <span className="text-[9px] text-neutral-400">{h}h</span>}
+                {h % 6 === 0 && <span className="text-[10px] text-neutral-400">{h}h</span>}
               </div>
             ))}
           </div>
@@ -280,19 +280,19 @@ function ActivityHeatmap({ data }) {
       </div>
       <div className="flex items-center justify-between mt-2">
         {hovered ? (
-          <p className="text-[11px] text-neutral-500">
+          <p className="text-[12px] text-neutral-500">
             <span className="font-semibold text-neutral-700">{DAY_LABELS[hovered.d]}</span>
             {' '}at {hovered.h}:00 — <span className="font-semibold text-hl-blue">{hovered.val} mentions</span>
           </p>
         ) : (
-          <p className="text-[11px] text-neutral-400">Hover to see hourly details</p>
+          <p className="text-[12px] text-neutral-400">Hover to see hourly details</p>
         )}
         <div className="flex items-center gap-1.5">
-          <span className="text-[9px] text-neutral-400">Less</span>
+          <span className="text-[12px] text-neutral-400">Less</span>
           {[0, 0.2, 0.4, 0.6, 0.8, 1].map(i => (
             <div key={i} className="w-3 h-3 rounded-[2px]" style={{ background: i === 0 ? '#F2F4F7' : `rgba(21,94,239,${0.08 + i * 0.82})` }} />
           ))}
-          <span className="text-[9px] text-neutral-400">More</span>
+          <span className="text-[12px] text-neutral-400">More</span>
         </div>
       </div>
     </div>
@@ -466,7 +466,7 @@ export default function TopicDetailPage() {
             <button
               onClick={() => togglePlatform('All')}
               className={`px-2.5 py-1 rounded-full text-[12px] font-medium whitespace-nowrap transition-all ${
-                allSelected ? 'bg-hl-blue-light text-hl-blue border border-[#C7D7FD]' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
+                allSelected ? 'bg-hl-blue-light text-hl-blue border border-hl-blue-border' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
               }`}
             >All</button>
             {SOCIAL_PLATFORMS.map(p => (
@@ -474,7 +474,7 @@ export default function TopicDetailPage() {
                 key={p}
                 onClick={() => togglePlatform(p)}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium whitespace-nowrap transition-all ${
-                  selectedPlatforms.has(p) ? 'bg-hl-blue-light text-hl-blue border border-[#C7D7FD]' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
+                  selectedPlatforms.has(p) ? 'bg-hl-blue-light text-hl-blue border border-hl-blue-border' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
                 }`}
               >
                 <PlatformIcon name={p} size={14} />{p}
@@ -524,7 +524,7 @@ export default function TopicDetailPage() {
 
           {/* ─ KPI Cards ─ */}
           <div className="flex flex-col gap-2">
-            <p className="text-[11px] text-neutral-400">Last updated 2 hours ago · {dateRange} · {computed.totalMentions.toLocaleString()} mentions</p>
+            <p className="text-[12px] text-neutral-400">Last updated 2 hours ago · {dateRange} · {computed.totalMentions.toLocaleString()} mentions</p>
             <div className="grid grid-cols-5 gap-3">
               {[
                 { label:'Total mentions', value: computed.totalMentions.toLocaleString(), delta:'+12%', up:true },
@@ -534,9 +534,9 @@ export default function TopicDetailPage() {
                 { label:'Net sentiment',  value: `${netScore} pts`,                        delta:'+7pts',up:true },
               ].map(m => (
                 <div key={m.label} className="bg-white rounded-xl border border-neutral-200 p-4 shadow-sm">
-                  <p className="text-[11px] text-neutral-500 mb-1 font-medium">{m.label}</p>
-                  <p className="text-[20px] font-bold text-neutral-900 leading-tight">{m.value}</p>
-                  <p className={`text-[11px] mt-1 font-medium ${m.up ? 'text-positive' : 'text-negative'}`}>{m.delta} vs prev</p>
+                  <p className="text-[12px] text-neutral-500 mb-1 font-medium">{m.label}</p>
+                  <p className="text-[24px] font-semibold text-neutral-900 leading-tight">{m.value}</p>
+                  <p className={`text-[12px] mt-1 font-medium ${m.up ? 'text-positive' : 'text-negative'}`}>{m.delta} vs prev</p>
                 </div>
               ))}
             </div>
@@ -558,7 +558,7 @@ export default function TopicDetailPage() {
                   {[{ label:'Positive', color:'#16A34A' },{ label:'Negative', color:'#DC2626' }].map(l => (
                     <div key={l.label} className="flex items-center gap-1.5">
                       <div className="w-3 h-0.5 rounded" style={{ background: l.color }} />
-                      <span className="text-[10px] text-neutral-500">{l.label} %</span>
+                      <span className="text-[12px] text-neutral-500">{l.label} %</span>
                     </div>
                   ))}
                 </div>
@@ -610,7 +610,7 @@ export default function TopicDetailPage() {
                   {[{ label:'Mentions', color:'#EEF4FF', border:'#155EEF' },{ label:'Positive %', color:'#16A34A' }].map(l => (
                     <div key={l.label} className="flex items-center gap-1.5">
                       <div className="w-3 h-3 rounded-sm" style={{ background: l.color, border: l.border ? `1px solid ${l.border}` : 'none' }} />
-                      <span className="text-[10px] text-neutral-500">{l.label}</span>
+                      <span className="text-[12px] text-neutral-500">{l.label}</span>
                     </div>
                   ))}
                 </div>
@@ -654,7 +654,7 @@ export default function TopicDetailPage() {
                   {computed.platformData.map(p => (
                     <div key={p.name} className="flex items-center gap-1.5">
                       <div className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-                      <span className="text-[10px] text-neutral-500">{p.name}</span>
+                      <span className="text-[12px] text-neutral-500">{p.name}</span>
                     </div>
                   ))}
                 </div>
@@ -665,7 +665,7 @@ export default function TopicDetailPage() {
                   {computed.pList.map(p => (
                     <div key={p} className="flex items-center gap-1.5">
                       <div className="w-4 h-0.5 rounded" style={{ background: PLATFORM_CONFIG[p].color }} />
-                      <span className="text-[10px] text-neutral-500">{p}</span>
+                      <span className="text-[12px] text-neutral-500">{p}</span>
                     </div>
                   ))}
                 </div>
@@ -704,11 +704,11 @@ export default function TopicDetailPage() {
                 <div className="space-y-2.5">
                   {computed.emotions.map(e => (
                     <div key={e.subject} className="flex items-center gap-2">
-                      <span className="text-[11px] text-neutral-500 w-24 shrink-0">{e.subject}</span>
+                      <span className="text-[12px] text-neutral-500 w-24 shrink-0">{e.subject}</span>
                       <div className="flex-1 bg-neutral-100 rounded-full h-1.5">
                         <div className="h-1.5 rounded-full" style={{ width: `${e.value}%`, background: e.color }} />
                       </div>
-                      <span className="text-[11px] text-neutral-500 w-6 text-right shrink-0">{e.value}%</span>
+                      <span className="text-[12px] text-neutral-500 w-6 text-right shrink-0">{e.value}%</span>
                     </div>
                   ))}
                 </div>
@@ -742,8 +742,8 @@ export default function TopicDetailPage() {
                     <m.icon size={15} className={m.color} />
                   </div>
                   <div>
-                    <p className="text-[18px] font-bold text-neutral-900 leading-tight">{m.value}</p>
-                    <p className="text-[11px] text-neutral-400">{m.label}</p>
+                    <p className="text-[16px] font-semibold text-neutral-900 leading-tight">{m.value}</p>
+                    <p className="text-[12px] text-neutral-400">{m.label}</p>
                   </div>
                 </div>
               ))}
@@ -796,14 +796,14 @@ export default function TopicDetailPage() {
                   <div className="space-y-2.5">
                     {TRENDING_TOPICS.map((t, i) => (
                       <div key={t.name} className="flex items-center gap-2">
-                        <span className="text-[10px] font-semibold text-neutral-300 w-4 shrink-0">{i+1}</span>
+                        <span className="text-[12px] font-semibold text-neutral-300 w-4 shrink-0">{i+1}</span>
                         <div className="flex-1 min-w-0">
                           <p className="text-[12px] font-medium text-neutral-700 truncate">{t.name}</p>
-                          <p className="text-[10px] text-neutral-400">{t.mentions.toLocaleString()} mentions</p>
+                          <p className="text-[12px] text-neutral-400">{t.mentions.toLocaleString()} mentions</p>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
                           {t.hot && <Flame size={11} className="text-orange-400" />}
-                          <span className="text-[11px] font-semibold text-positive">{t.change}</span>
+                          <span className="text-[12px] font-semibold text-positive">{t.change}</span>
                         </div>
                       </div>
                     ))}
@@ -811,20 +811,20 @@ export default function TopicDetailPage() {
                 </div>
                 <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="text-[13px] font-black text-hl-blue">#</span>
+                    <span className="text-[13px] font-semibold text-hl-blue">#</span>
                     <p className="text-[13px] font-semibold text-neutral-900">Trending hashtags</p>
                   </div>
                   <div className="space-y-2.5">
                     {TRENDING_HASHTAGS.map((h, i) => (
                       <div key={h.tag} className="flex items-center gap-2">
-                        <span className="text-[10px] font-semibold text-neutral-300 w-4 shrink-0">{i+1}</span>
+                        <span className="text-[12px] font-semibold text-neutral-300 w-4 shrink-0">{i+1}</span>
                         <div className="flex-1 min-w-0">
                           <p className="text-[12px] font-medium text-hl-blue truncate">{h.tag}</p>
-                          <p className="text-[10px] text-neutral-400">{h.count.toLocaleString()} posts</p>
+                          <p className="text-[12px] text-neutral-400">{h.count.toLocaleString()} posts</p>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
                           {h.hot && <Flame size={11} className="text-orange-400" />}
-                          <span className="text-[11px] font-semibold text-positive">{h.change}</span>
+                          <span className="text-[12px] font-semibold text-positive">{h.change}</span>
                         </div>
                       </div>
                     ))}
@@ -835,7 +835,7 @@ export default function TopicDetailPage() {
               <div className="col-span-2 bg-white rounded-xl border border-neutral-200 shadow-sm p-5 flex flex-col h-full">
                 <div className="flex items-center justify-between mb-3 shrink-0">
                   <p className="text-[13px] font-semibold text-neutral-900">Conversation feed</p>
-                  <span className="text-[11px] text-neutral-400">Showing {sentimentFilter === 'all' ? computed.posts.length : computed.posts.filter(p => p.sentiment === sentimentFilter).length} of {computed.totalMentions.toLocaleString()}</span>
+                  <span className="text-[12px] text-neutral-400">Showing {sentimentFilter === 'all' ? computed.posts.length : computed.posts.filter(p => p.sentiment === sentimentFilter).length} of {computed.totalMentions.toLocaleString()}</span>
                 </div>
 
                 <div className="flex items-center gap-1.5 mb-4 flex-wrap shrink-0">
@@ -851,13 +851,13 @@ export default function TopicDetailPage() {
                       <button
                         key={chip.key}
                         onClick={() => setSentimentFilter(chip.key)}
-                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-all ${
-                          active ? 'bg-hl-blue-light text-hl-blue border border-[#C7D7FD]' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200 border border-transparent'
+                        className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium transition-all ${
+                          active ? 'bg-hl-blue-light text-hl-blue border border-hl-blue-border' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200 border border-transparent'
                         }`}
                       >
                         {chip.dot && <div className={`w-1.5 h-1.5 rounded-full ${chip.dot}`} />}
                         {chip.label}
-                        <span className={`text-[10px] ${active ? 'text-hl-blue/70' : 'text-neutral-400'}`}>{count}</span>
+                        <span className={`text-[12px] ${active ? 'text-hl-blue/70' : 'text-neutral-400'}`}>{count}</span>
                       </button>
                     )
                   })}
@@ -881,15 +881,15 @@ export default function TopicDetailPage() {
                                   <div className="flex items-center gap-1.5 mb-1.5">
                                     <PlatformIcon name={post.platform} size={16} />
                                     <span className="text-[11.5px] font-medium text-neutral-700 truncate">{post.author}</span>
-                                    <span className="text-[10px] text-neutral-300">·</span>
-                                    <span className="text-[10px] text-neutral-400 shrink-0">{post.date}</span>
-                                    <span className={`ml-auto text-[9px] px-1.5 py-0.5 rounded-full border capitalize ${SENTIMENT_BADGE[post.sentiment]}`}>{post.sentiment}</span>
+                                    <span className="text-[12px] text-neutral-300">·</span>
+                                    <span className="text-[12px] text-neutral-400 shrink-0">{post.date}</span>
+                                    <span className={`ml-auto text-[12px] px-1.5 py-0.5 rounded-full border capitalize ${SENTIMENT_BADGE[post.sentiment]}`}>{post.sentiment}</span>
                                   </div>
                                   <p className="text-[12px] text-neutral-600 leading-relaxed mb-2 flex-1">{post.text}</p>
                                   <div className="flex items-center gap-2.5 pt-1.5 border-t border-neutral-50">
-                                    <span className="flex items-center gap-1 text-[10px] text-neutral-400"><Heart size={10} />{post.likes.toLocaleString()}</span>
-                                    <span className="flex items-center gap-1 text-[10px] text-neutral-400"><Repeat2 size={10} />{post.shares}</span>
-                                    <a href="#" className="ml-auto flex items-center gap-1 text-[10px] text-hl-blue hover:underline">View <ExternalLink size={9} /></a>
+                                    <span className="flex items-center gap-1 text-[12px] text-neutral-400"><Heart size={10} />{post.likes.toLocaleString()}</span>
+                                    <span className="flex items-center gap-1 text-[12px] text-neutral-400"><Repeat2 size={10} />{post.shares}</span>
+                                    <a href="#" className="ml-auto flex items-center gap-1 text-[12px] text-hl-blue hover:underline">View <ExternalLink size={9} /></a>
                                   </div>
                                 </div>
                               </div>
@@ -934,7 +934,7 @@ export default function TopicDetailPage() {
                   {AUDIENCE_GENDER.map(g => (
                     <div key={g.name} className="flex items-center gap-1.5">
                       <div className="w-2 h-2 rounded-full" style={{ background: g.color }} />
-                      <span className="text-[10px] text-neutral-500">{g.name} {g.value}%</span>
+                      <span className="text-[12px] text-neutral-500">{g.name} {g.value}%</span>
                     </div>
                   ))}
                 </div>
@@ -955,11 +955,11 @@ export default function TopicDetailPage() {
                 <div className="space-y-2.5">
                   {AUDIENCE_LOCATIONS.map(l => (
                     <div key={l.name} className="flex items-center gap-2">
-                      <span className="text-[11px] text-neutral-600 w-24 shrink-0 truncate">{l.name}</span>
+                      <span className="text-[12px] text-neutral-600 w-24 shrink-0 truncate">{l.name}</span>
                       <div className="flex-1 bg-neutral-100 rounded-full h-1.5">
                         <div className="h-1.5 rounded-full bg-amber-400" style={{ width: `${l.pct}%` }} />
                       </div>
-                      <span className="text-[11px] text-neutral-500 w-6 text-right shrink-0">{l.pct}%</span>
+                      <span className="text-[12px] text-neutral-500 w-6 text-right shrink-0">{l.pct}%</span>
                     </div>
                   ))}
                 </div>
@@ -976,7 +976,7 @@ export default function TopicDetailPage() {
             <Check size={14} className="text-green-600 shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-[12px] font-semibold text-green-700">Topic saved</p>
-              <p className="text-[11px] text-green-600">"{query}" added to your topics</p>
+              <p className="text-[12px] text-green-600">"{query}" added to your topics</p>
             </div>
             <button onClick={() => setShowToast(false)} className="text-green-500 hover:text-green-700 transition-colors shrink-0 mt-0.5">
               <X size={13} />

@@ -119,29 +119,30 @@ Pages in `src/pages/` render **content area only**. Never import Sidebar or TopB
 
 ## 9. Current Screen Inventory
 
-All three screens are built. Routes live in `src/App.jsx`.
+Three screens active. Routes live in `src/App.jsx`.
 
 ### `/search` → `src/pages/SearchPage.jsx`
-- Landing screen. Centered search input + "Search" button (disabled until text entered)
-- Platform filter chips: All · X · Instagram · Reddit · YouTube · News (active = `bg-hl-blue text-white`)
-- 3 feature cards below (Sentiment analysis, Emotion radar, Instant publish) — static, decorative
-- On submit: `navigate('/insights', { state: { query, platform } })`
-
-### `/insights` → `src/pages/InsightsPage.jsx`
-- Receives `query` + `platform` from router state (falls back to `"HighLevel"` if missing)
-- Row 1: 4 metric cards — Total Mentions 1,248 · Positive 68% · Negative 11% · Engagement 24.3K
-- Row 2 left (col-span-2): Share of Voice by Platform — `bg-hl-blue` progress bar fill
-- Row 2 right: Emotion Breakdown — Joy 42% · Trust 28% · Anticipation 15% · Surprise 8% · Anger 7%
-- Row 3: Conversation Feed — 5 hardcoded `MOCK_POSTS` (X, Reddit, Instagram, News, YouTube)
-- "← Back" navigates to `/search`
-- Platform badge colors: X=`bg-neutral-900`, Reddit=`bg-orange-500`, Instagram=`bg-pink-500`, YouTube=`bg-red-600`, News=`bg-hl-blue`
+- Two tabs: "Topic" (saved topics + trending cards) and "Social trends" (Google/Pinterest/Wikipedia trend columns)
+- Search input with autocomplete dropdown (mentions + sentiment per suggestion)
+- Topic tab: blank state illustration + "Create topic" CTA; topic state: summary stats + topic cards grid
+- Trending cards: horizontal scroll row of 8 platform hashtag cards, each navigates to `/topic-detail`
+- On search submit: `navigate('/topic-detail', { state: { query, isSavedTopic: false } })`
+- "Create topic" opens `<CreateTopicModal>` (2-step wizard + animated setup screen)
+- Topics persisted to `localStorage` under key `sl.topics.v1`
 
 ### `/topics` → `src/pages/TopicsPage.jsx`
 - 3 hardcoded `MOCK_TOPICS`: HighLevel (1,248, 68%) · Email Marketing (843, 54%) · Marketing Automation (612, 61%)
+- White card wrapper matching SearchPage/TopicDetailPage shell
 - Each row shows: name + updated time · mention count · positive % · platform chips (`bg-hl-blue-light text-hl-blue`)
-- Click any row → `navigate('/insights', { state: { query: topic.name } })`
-- "+ New Topic" → `navigate('/search')`
+- Click any row → `navigate('/topic-detail', { state: { query: topic.name, isSavedTopic: true } })`
+- "+ New topic" → `navigate('/search')`
 - Uses `<Header>` component (see below)
+
+### `/topic-detail` → `src/pages/TopicDetailPage.jsx`
+- Multi-platform analytics dashboard for a searched keyword or saved topic
+- Toolbar: Back · query title · platform filter chips (multi-select) · date range picker · Save as topic button
+- Sections: KPI cards · Sentiment analysis (donut + area chart) · Mentions (bar + composed chart + heatmap) · Platform intelligence (pie + line chart) · Emotion & keywords (radar + bars + word cloud) · Engagement (4 metric cards + area + bar) · Conversation feed (2-col card grid, filterable by sentiment) · Audience insights (language/gender/age/location)
+- Saving a topic writes to `localStorage` under key `sl.topics.v1`
 
 ---
 
@@ -188,3 +189,4 @@ When a new design decision is confirmed (new token, new pattern, new frozen comp
 |------|--------------|---------|---------|
 | `76d77f2` | Social Listening 1.8 | Conversation feed redesign — filterable 2-col card grid with sentiment strips, internal scroll with gradient fade, chart heights +30px, section spacing increased | `git reset --hard 76d77f2` |
 | `71b5bb9` | Social Listening 1.9 | Search autocomplete dropdown with mention count + sentiment per result, trending cards navigate to detail, mock post copy softened | `git reset --hard 71b5bb9` |
+| `a7e3856` | Social Listening 2.0 pre-QA | Snapshot before QA-driven fixes — use this to compare before/after | `git reset --hard a7e3856` |
