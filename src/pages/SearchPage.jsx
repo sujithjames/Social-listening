@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Trash2, TrendingUp, RefreshCw, ChevronDown, Calendar, Globe, Tag, AtSign } from 'lucide-react'
+import { siReddit } from 'simple-icons'
 import CreateTopicModal from '../components/CreateTopicModal'
 
 const STORAGE_KEY = 'sl.topics.v1'
@@ -194,13 +195,17 @@ function PlatformIcon({ platform, size = 32 }) {
       return (
         <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
           <circle cx="16" cy="16" r="16" fill="#FF4500"/>
-          <circle cx="16" cy="17" r="5.5" fill="white"/>
-          <circle cx="16" cy="15" r="3.5" fill="white"/>
-          <path d="M11 17 a5 4 0 0 0 10 0" stroke="#FF4500" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
-          <circle cx="14" cy="16.5" r="1" fill="#FF4500"/>
-          <circle cx="18" cy="16.5" r="1" fill="#FF4500"/>
-          <circle cx="20" cy="12" r="2" fill="white"/>
-          <path d="M18 13.5 l2-1.5" stroke="white" strokeWidth="1" strokeLinecap="round"/>
+          <g transform="translate(7, 7) scale(0.75)">
+            <path d={siReddit.path} fill="white"/>
+          </g>
+        </svg>
+      )
+    case 'Wikipedia':
+      return (
+        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="16" fill="white"/>
+          <circle cx="16" cy="16" r="13" stroke="#A2A9B1" strokeWidth="0.8" strokeDasharray="2.5 2"/>
+          <text x="16" y="21.5" textAnchor="middle" fontSize="15" fontWeight="700" fontFamily="Georgia, serif" fontStyle="italic" fill="#101828">W</text>
         </svg>
       )
     default:
@@ -617,10 +622,9 @@ function ListeningIllustration() {
         <circle cx="46" cy="58" r="4" stroke="white" strokeWidth="1.5" />
         <circle cx="52" cy="52.5" r="1.2" fill="white" />
         <circle cx="48" cy="156" r="18" fill="#FF4500" />
-        <circle cx="48" cy="154" r="5.5" fill="white" />
-        <path d="M40 160 a8 6 0 0 0 16 0" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        <circle cx="58" cy="150" r="2.5" fill="white" />
-        <path d="M55 152 l3-4" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
+        <g transform="translate(38, 146) scale(0.833)">
+          <path d={siReddit.path} fill="white"/>
+        </g>
         <circle cx="162" cy="158" r="18" fill="#FF0000" />
         <rect x="154" y="151" width="16" height="14" rx="3" fill="white" />
         <path d="M159 154.5 l7 3.5 -7 3.5 z" fill="#FF0000" />
@@ -688,15 +692,12 @@ function TrendThumbnail({ type, color }) {
   )
 }
 
-function TrendColumn({ title, avatar, accentColor, items, onTrack }) {
+function TrendColumn({ title, logo, accentColor, items, onTrack }) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
       <div className="flex items-center gap-3 px-4 py-3.5 border-b border-gray-100" style={{ background: `linear-gradient(135deg, ${accentColor}12 0%, transparent 70%)` }}>
-        <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-[14px] font-bold shrink-0"
-          style={{ background: avatar.bg, color: avatar.color }}
-        >
-          {avatar.letter}
+        <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center shrink-0">
+          {logo}
         </div>
         <p className="text-[14px] font-semibold text-gray-900 flex-1">{title}</p>
         <span className="relative flex h-2 w-2">
@@ -768,21 +769,21 @@ function SocialTrendsTab({ onTrack }) {
       <div className="grid grid-cols-3 gap-4">
         <TrendColumn
           title="Google trends"
-          avatar={{ letter: 'G', bg: '#EEF4FF', color: '#155EEF' }}
+          logo={<PlatformIcon platform="Google" size={32} />}
           accentColor="#4285F4"
           items={GOOGLE_TRENDS}
           onTrack={onTrack}
         />
         <TrendColumn
           title="Pinterest keywords"
-          avatar={{ letter: 'P', bg: '#FFF0F0', color: '#E60023' }}
+          logo={<PlatformIcon platform="Pinterest" size={32} />}
           accentColor="#E60023"
           items={PINTEREST_TRENDS}
           onTrack={onTrack}
         />
         <TrendColumn
           title="Wikipedia pageviews"
-          avatar={{ letter: 'W', bg: '#F2F4F7', color: '#667085' }}
+          logo={<PlatformIcon platform="Wikipedia" size={32} />}
           accentColor="#94A3B8"
           items={WIKIPEDIA_TRENDS}
           onTrack={onTrack}

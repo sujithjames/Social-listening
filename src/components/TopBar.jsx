@@ -11,22 +11,22 @@ const ACTIVE_SUB_TAB = 'Social listening'
 export default function TopBar() {
   return (
     <>
-      <div className="h-[84px] shrink-0" />
+      <div className="h-[86px] shrink-0" />
       <header className="fixed top-0 left-[280px] right-0 bg-white flex flex-col shrink-0 z-10">
 
       {/* ── Row 1: Marketing title + section tabs + global actions ── */}
       <div className="flex items-center gap-12 px-4 py-1 border-b border-[#EAECF0] shadow-[0px_1px_1px_rgba(16,24,40,0.05)]">
 
         {/* Left: Title + tabs */}
-        <div className="flex flex-1 items-end gap-3 min-w-0">
+        <div className="flex flex-1 self-stretch items-center gap-3 min-w-0">
           <span className="text-[20px] font-semibold text-[#101828] leading-[30px] whitespace-nowrap shrink-0">
             Marketing
           </span>
-          <div className="flex items-center gap-1 pb-0">
+          <div className="flex self-stretch items-center gap-1">
             {SECTION_TABS.map(tab => (
-              <div key={tab} className="relative flex items-center justify-center px-2 h-6 shrink-0">
+              <div key={tab} className="relative flex items-center justify-center px-2 self-stretch shrink-0">
                 <span
-                  className={`text-[16px] whitespace-nowrap ${
+                  className={`text-[16px] whitespace-nowrap translate-y-px ${
                     tab === ACTIVE_SECTION_TAB
                       ? 'font-semibold text-[#155EEF]'
                       : 'font-medium text-[#667085]'
@@ -35,7 +35,7 @@ export default function TopBar() {
                   {tab}
                 </span>
                 {tab === ACTIVE_SECTION_TAB && (
-                  <span className="absolute bottom-[-5px] left-0 right-0 h-[2px] bg-[#155EEF] rounded-full" />
+                  <span className="absolute bottom-[-4px] left-0 right-0 h-[2px] bg-[#155EEF] rounded-full" />
                 )}
               </div>
             ))}
@@ -74,14 +74,14 @@ export default function TopBar() {
       <div className="flex items-center gap-12 px-4 border-b border-[#D0D5DD]">
 
         {/* Left: subtitle + sub-tabs */}
-        <div className="flex flex-1 self-stretch items-center gap-2 min-w-0 pt-1">
-          <span className="text-[16px] font-semibold text-[#101828] leading-6 whitespace-nowrap shrink-0 pb-1">
+        <div className="flex flex-1 self-stretch items-center gap-2 min-w-0">
+          <span className="text-[16px] font-semibold text-[#101828] leading-6 whitespace-nowrap shrink-0">
             Social planner
           </span>
           <div className="flex self-stretch items-center gap-1 overflow-x-auto">
             {SUB_TABS.map(tab => (
               <div key={tab} className="relative flex items-center justify-center px-2 self-stretch shrink-0">
-                <span className={`flex items-center gap-1.5 text-[15px] whitespace-nowrap ${
+                <span className={`flex items-center gap-1.5 text-[15px] whitespace-nowrap translate-y-px ${
                     tab === ACTIVE_SUB_TAB
                       ? 'font-semibold text-[#004EEB]'
                       : 'font-medium text-[#667085]'

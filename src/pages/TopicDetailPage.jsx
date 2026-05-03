@@ -302,32 +302,31 @@ function ActivityHeatmap({ data }) {
 function SentimentDonut({ positive, neutral, negative }) {
   const r = 52, cx = 68, cy = 68
   const circ = 2 * Math.PI * r
-  const gap = 4
   const base = circ * 0.25
-  const posLen = (positive / 100) * circ - gap
-  const neutLen = (neutral / 100) * circ - gap
-  const negLen = (negative / 100) * circ - gap
+  const posLen = (positive / 100) * circ
+  const neutLen = (neutral / 100) * circ
+  const negLen = (negative / 100) * circ
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex flex-col items-center gap-4">
       <svg width={136} height={136} viewBox="0 0 136 136">
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="#F2F4F7" strokeWidth={15} />
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="#16A34A" strokeWidth={15}
-          strokeDasharray={`${posLen} ${circ}`} strokeDashoffset={base} strokeLinecap="round" />
+          strokeDasharray={`${posLen} ${circ}`} strokeDashoffset={base} strokeLinecap="butt" />
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="#D0D5DD" strokeWidth={15}
-          strokeDasharray={`${neutLen} ${circ}`} strokeDashoffset={base - (positive / 100) * circ - gap / 2} strokeLinecap="round" />
+          strokeDasharray={`${neutLen} ${circ}`} strokeDashoffset={base - (positive / 100) * circ} strokeLinecap="butt" />
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="#DC2626" strokeWidth={15}
-          strokeDasharray={`${negLen} ${circ}`} strokeDashoffset={base - ((positive + neutral) / 100) * circ - gap} strokeLinecap="round" />
+          strokeDasharray={`${negLen} ${circ}`} strokeDashoffset={base - ((positive + neutral) / 100) * circ} strokeLinecap="butt" />
         <text x={cx} y={cx - 7} textAnchor="middle" fontSize={21} fontWeight={700} fill="#101828">{positive}%</text>
         <text x={cx} y={cx + 12} textAnchor="middle" fontSize={11} fill="#667085">Positive</text>
       </svg>
-      <div className="flex flex-col gap-2.5">
+      <div className="flex items-center gap-5">
         {[{ label:'Positive', pct: positive, dot:'bg-positive' },
           { label:'Neutral',  pct: neutral,  dot:'bg-gray-300' },
           { label:'Negative', pct: negative, dot:'bg-negative' }].map(s => (
-          <div key={s.label} className="flex items-center gap-2">
-            <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${s.dot}`} />
-            <span className="text-[12px] text-neutral-500 w-16">{s.label}</span>
-            <span className="text-[13px] font-semibold text-neutral-800">{s.pct}%</span>
+          <div key={s.label} className="flex items-center gap-1.5">
+            <div className={`w-2 h-2 rounded-full shrink-0 ${s.dot}`} />
+            <span className="text-[12px] text-neutral-500">{s.label}</span>
+            <span className="text-[12px] font-semibold text-neutral-800">{s.pct}%</span>
           </div>
         ))}
       </div>
@@ -547,9 +546,11 @@ export default function TopicDetailPage() {
           <div>
             <SectionHeader label="Sentiment analysis" />
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
-                <p className="text-[13px] font-semibold text-neutral-900 mb-3">Sentiment distribution</p>
-                <SentimentDonut positive={computed.avgPositive} neutral={computed.avgNeutral} negative={computed.avgNegative} />
+              <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm flex flex-col">
+                <p className="text-[13px] font-semibold text-neutral-900 mb-3 shrink-0">Sentiment distribution</p>
+                <div className="flex flex-1 items-center justify-center">
+                  <SentimentDonut positive={computed.avgPositive} neutral={computed.avgNeutral} negative={computed.avgNegative} />
+                </div>
               </div>
               <div className="col-span-2 bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
                 <p className="text-[13px] font-semibold text-neutral-900 mb-1">Sentiment over time</p>

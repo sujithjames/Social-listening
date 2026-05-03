@@ -252,10 +252,10 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
             <div className="flex flex-col items-center justify-center py-14 px-6 gap-8 min-h-[440px]">
               {/* Orbital visualization */}
               <div className="relative flex items-center justify-center" style={{ width: 200, height: 200 }}>
-                {/* Outer ping */}
+                {/* Dashed orbit ring — behind everything */}
                 <div
-                  className="absolute inset-0 rounded-full animate-ping"
-                  style={{ backgroundColor: '#EEF4FF', opacity: 0.4, animationDuration: '2.2s' }}
+                  className="absolute rounded-full border-2 border-dashed animate-spin"
+                  style={{ inset: 22, borderColor: '#C7D7FD', animationDuration: '10s' }}
                 />
 
                 {/* Platform icons orbiting */}
@@ -275,24 +275,19 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
                         width: 36, height: 36,
                         left: `calc(50% + ${cx}px - 18px)`,
                         top: `calc(50% + ${cy}px - 18px)`,
-                        backgroundColor: source.bg,
-                        transform: `scale(${lit ? 1 : 0.72})`,
-                        boxShadow: lit ? `0 0 0 3px ${source.color}20` : 'none',
+                        backgroundColor: source.color,
+                        transform: `scale(${lit ? 1 : 0.75})`,
+                        opacity: lit ? 1 : 0.35,
+                        boxShadow: lit ? `0 0 0 3px ${source.color}35, 0 2px 8px ${source.color}40` : 'none',
                       }}
                     >
                       {Icon
-                        ? <Icon size={15} style={{ color: lit ? source.color : '#98A2B3' }} />
-                        : <BrandGlyph id={source.id} size={15} color={lit ? source.color : '#98A2B3'} />
+                        ? <Icon size={15} style={{ color: 'white' }} />
+                        : <BrandGlyph id={source.id} size={15} color="white" />
                       }
                     </div>
                   )
                 })}
-
-                {/* Dashed orbit ring */}
-                <div
-                  className="absolute rounded-full border-2 border-dashed animate-spin"
-                  style={{ inset: 22, borderColor: '#C7D7FD', animationDuration: '10s' }}
-                />
 
                 {/* Inner spinner arc */}
                 <div
@@ -426,11 +421,11 @@ function SourceCard({ source, selected, onToggle }) {
     >
       <div
         className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center"
-        style={{ backgroundColor: source.bg }}
+        style={{ backgroundColor: source.color }}
       >
         {Icon
-          ? <Icon size={16} style={{ color: source.color }} />
-          : <span className="text-[14px] font-bold leading-none" style={{ color: source.color }}>{source.letter}</span>
+          ? <Icon size={16} style={{ color: 'white' }} />
+          : <BrandGlyph id={source.id} size={16} color="white" />
         }
       </div>
       <div className="flex-1 min-w-0 pt-0.5">
