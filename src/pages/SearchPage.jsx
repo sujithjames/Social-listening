@@ -1022,12 +1022,29 @@ function ColumnHeader({ label, sortKey, current, dir, onSort, align = 'left' }) 
 
 function ColumnSortMenu({ active, dir, onSort, align = 'left' }) {
   const [open, setOpen] = useState(false)
-  const ref = useRef(null)
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 })
+  const btnRef = useRef(null)
+  const menuRef = useRef(null)
+
+  function handleToggle(e) {
+    e.stopPropagation()
+    if (!open && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect()
+      setMenuPos({
+        top: rect.bottom + 4,
+        left: align === 'right' ? rect.right - 176 : rect.left,
+      })
+    }
+    setOpen(v => !v)
+  }
 
   useEffect(() => {
     if (!open) return
     function handleMouseDown(e) {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+      if (menuRef.current && !menuRef.current.contains(e.target) &&
+          btnRef.current && !btnRef.current.contains(e.target)) {
+        setOpen(false)
+      }
     }
     function handleKey(e) {
       if (e.key === 'Escape') setOpen(false)
@@ -1041,9 +1058,10 @@ function ColumnSortMenu({ active, dir, onSort, align = 'left' }) {
   }, [open])
 
   return (
-    <span className="relative inline-flex" ref={ref}>
+    <span className="inline-flex">
       <button
-        onClick={e => { e.stopPropagation(); setOpen(v => !v) }}
+        ref={btnRef}
+        onClick={handleToggle}
         title="Sort options"
         className={`p-0.5 rounded transition-colors ${
           active ? 'text-hl-blue' : 'text-neutral-300 hover:text-neutral-500'
@@ -1051,10 +1069,12 @@ function ColumnSortMenu({ active, dir, onSort, align = 'left' }) {
       >
         <Filter size={11} />
       </button>
-      {open && (
-        <div className={`absolute top-full mt-1 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-30 py-1 ${
-          align === 'right' ? 'right-0' : 'left-0'
-        }`}>
+      {open && createPortal(
+        <div
+          ref={menuRef}
+          style={{ position: 'fixed', top: menuPos.top, left: menuPos.left }}
+          className="w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999] py-1"
+        >
           <button
             onClick={() => { onSort('asc'); setOpen(false) }}
             className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-[13px] text-left hover:bg-gray-50 transition-colors ${
@@ -1079,7 +1099,8 @@ function ColumnSortMenu({ active, dir, onSort, align = 'left' }) {
             </span>
             {active && dir === 'desc' && <Check size={12} className="text-hl-blue" />}
           </button>
-        </div>
+        </div>,
+        document.body
       )}
     </span>
   )
