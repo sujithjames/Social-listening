@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useId } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Trash2, TrendingUp, TrendingDown, RefreshCw, ChevronDown, Calendar, Globe, Tag, AtSign, LayoutGrid, List, ArrowUp, ArrowDown, MoreVertical, Filter, ExternalLink, Check } from 'lucide-react'
+import { Search, Plus, Trash2, TrendingUp, TrendingDown, RefreshCw, ChevronDown, ChevronLeft, ChevronRight, Calendar, Globe, Tag, AtSign, LayoutGrid, List, ArrowUp, ArrowDown, MoreVertical, Filter, ExternalLink, Check } from 'lucide-react'
 import { siReddit } from 'simple-icons'
 import CreateTopicModal from '../components/CreateTopicModal'
 import PlatformIcon from '../components/PlatformIcon'
@@ -192,7 +192,24 @@ export default function SearchPage() {
   const [topicsView, setTopicsView] = useState('list')
   const [topicsFilter, setTopicsFilter] = useState('')
   const searchRef = useRef(null)
+  const trendingRef = useRef(null)
+  const [trendingScroll, setTrendingScroll] = useState({ atStart: true, atEnd: false })
   const navigate = useNavigate()
+
+  function handleTrendingScroll() {
+    const el = trendingRef.current
+    if (!el) return
+    setTrendingScroll({
+      atStart: el.scrollLeft <= 2,
+      atEnd: el.scrollLeft + el.clientWidth >= el.scrollWidth - 2,
+    })
+  }
+
+  function scrollTrending(dir) {
+    const el = trendingRef.current
+    if (!el) return
+    el.scrollBy({ left: dir * 224, behavior: 'smooth' })
+  }
 
   useEffect(() => {
     setTopics(loadTopicsFromStorage())
@@ -483,8 +500,33 @@ export default function SearchPage() {
                   </button>
                 </div>
 
-                <div className="relative -mx-5">
-                  <div className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth px-5 pb-1" style={{ scrollSnapType: 'x mandatory', scrollPaddingLeft: '20px' }}>
+                <div className="relative -mx-5 group/trending">
+                  {/* Left fade */}
+                  <div className={`pointer-events-none absolute left-0 top-0 bottom-1 w-20 bg-gradient-to-r from-white to-transparent z-10 transition-opacity duration-200 ${trendingScroll.atStart ? 'opacity-0' : 'opacity-100'}`} />
+                  {/* Right fade */}
+                  <div className={`pointer-events-none absolute right-0 top-0 bottom-1 w-20 bg-gradient-to-l from-white to-transparent z-10 transition-opacity duration-200 ${trendingScroll.atEnd ? 'opacity-0' : 'opacity-100'}`} />
+
+                  {/* Left arrow */}
+                  <button
+                    onClick={() => scrollTrending(-1)}
+                    className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 bg-white rounded-full border border-gray-200 shadow-sm flex items-center justify-center transition-all duration-150 ${trendingScroll.atStart ? 'opacity-0 pointer-events-none' : 'opacity-0 group-hover/trending:opacity-100 hover:bg-gray-50'}`}
+                  >
+                    <ChevronLeft size={14} className="text-gray-600" />
+                  </button>
+                  {/* Right arrow */}
+                  <button
+                    onClick={() => scrollTrending(1)}
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 w-7 h-7 bg-white rounded-full border border-gray-200 shadow-sm flex items-center justify-center transition-all duration-150 ${trendingScroll.atEnd ? 'opacity-0 pointer-events-none' : 'opacity-0 group-hover/trending:opacity-100 hover:bg-gray-50'}`}
+                  >
+                    <ChevronRight size={14} className="text-gray-600" />
+                  </button>
+
+                  <div
+                    ref={trendingRef}
+                    onScroll={handleTrendingScroll}
+                    className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth px-5 pb-1"
+                    style={{ scrollSnapType: 'x mandatory', scrollPaddingLeft: '20px' }}
+                  >
                     {TRENDING_DATA.map(trend => (
                       <div
                         key={trend.id}
@@ -506,7 +548,6 @@ export default function SearchPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="pointer-events-none absolute right-0 top-0 bottom-1 w-20 bg-gradient-to-l from-white to-transparent" />
                 </div>
               </div>
 
