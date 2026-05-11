@@ -1005,7 +1005,7 @@ function ColumnHeader({ label, sortKey, current, dir, onSort, align = 'left' }) 
   const active = current === sortKey
   const ChevIcon = dir === 'asc' ? ArrowUp : ArrowDown
   return (
-    <th className={`px-4 py-2.5 text-[12px] font-medium text-neutral-500 ${align === 'right' ? 'text-right' : 'text-left'}`}>
+    <th className={`px-4 py-2.5 text-[12px] font-medium text-neutral-500 border-r border-gray-200 ${align === 'right' ? 'text-right' : 'text-left'}`}>
       <span className="inline-flex items-center gap-1.5">
         <span className={active ? 'text-neutral-900' : ''}>{label}</span>
         {active && <ChevIcon size={11} className="text-hl-blue" />}
