@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { X, Check, Globe, Newspaper, Send, Music, Sparkles, Hash } from 'lucide-react'
+import PlatformIcon from './PlatformIcon'
 
 const SOURCES = [
   { id: 'facebook',  name: 'Facebook',    desc: 'Posts, visitor posts and comments', color: '#1877F2', bg: '#EBF5FF', letter: 'f' },
@@ -177,16 +178,9 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
                   <p className="text-[12px] text-gray-500">{selectedSources.length} source{selectedSources.length !== 1 ? 's' : ''} selected</p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  {selectedSources.slice(0, 4).map(id => {
-                    const s = SOURCES.find(src => src.id === id)
-                    if (!s) return null
-                    const Icon = s.icon
-                    return (
-                      <div key={id} className="w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: s.bg }}>
-                        {Icon ? <Icon size={10} style={{ color: s.color }} /> : <span className="text-[10px] font-semibold" style={{ color: s.color }}>{s.letter}</span>}
-                      </div>
-                    )
-                  })}
+                  {selectedSources.slice(0, 4).map(id => (
+                    <PlatformIcon key={id} platform={id} size={20} />
+                  ))}
                   {selectedSources.length > 4 && (
                     <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
                       <span className="text-[10px] font-semibold text-gray-500">+{selectedSources.length - 4}</span>

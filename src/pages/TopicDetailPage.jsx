@@ -1,9 +1,9 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, RefreshCw, Share2, Download, Bookmark, BookmarkCheck,
   ChevronDown, ExternalLink, TrendingUp, Flame, Eye, Heart, Repeat2, MessageSquare,
-  Check, X,
+  Check, X, Search, Sparkles, BarChart3, Filter,
 } from 'lucide-react'
 import {
   ResponsiveContainer, AreaChart, Area, LineChart, Line, BarChart, Bar,
@@ -15,6 +15,17 @@ const STORAGE_KEY = 'sl.topics.v1'
 // ─── Config ───────────────────────────────────────────────────────────────────
 const SOCIAL_PLATFORMS = ['X', 'Instagram', 'Reddit', 'YouTube', 'News', 'LinkedIn']
 const DATE_OPTIONS = ['Last 7 days', 'Last 15 days', 'Last 30 days']
+
+const SECTION_NAV = [
+  { id: 'overview',      label: 'Overview' },
+  { id: 'sentiment',     label: 'Sentiment' },
+  { id: 'mentions',      label: 'Mentions' },
+  { id: 'platforms',     label: 'Platforms' },
+  { id: 'emotion',       label: 'Emotion' },
+  { id: 'engagement',    label: 'Engagement' },
+  { id: 'conversations', label: 'Conversations' },
+  { id: 'audience',      label: 'Audience' },
+]
 
 const PLATFORM_CONFIG = {
   X:         { color: '#0F172A' },
@@ -301,25 +312,44 @@ function ActivityHeatmap({ data }) {
 
 function SentimentDonut({ positive, neutral, negative }) {
   const r = 52, cx = 68, cy = 68
-  const circ = 2 * Math.PI * r
-  const base = circ * 0.25
-  const posLen = (positive / 100) * circ
-  const neutLen = (neutral / 100) * circ
-  const negLen = (negative / 100) * circ
+
+  function polar(angleDeg) {
+    const rad = angleDeg * Math.PI / 180
+    return [cx + r * Math.sin(rad), cy - r * Math.cos(rad)]
+  }
+
+  function arc(startDeg, sweepDeg) {
+    if (sweepDeg <= 0) return null
+    if (sweepDeg >= 359.99) {
+      return `M ${cx} ${cy - r} A ${r} ${r} 0 1 1 ${cx} ${cy + r} A ${r} ${r} 0 1 1 ${cx} ${cy - r}`
+    }
+    const [sx, sy] = polar(startDeg)
+    const [ex, ey] = polar(startDeg + sweepDeg)
+    const largeArc = sweepDeg > 180 ? 1 : 0
+    return `M ${sx} ${sy} A ${r} ${r} 0 ${largeArc} 1 ${ex} ${ey}`
+  }
+
+  const posDeg = (positive / 100) * 360
+  const neuDeg = (neutral / 100) * 360
+  const negDeg = (negative / 100) * 360
+
+  const posPath = arc(0, posDeg)
+  const neuPath = arc(posDeg, neuDeg)
+  const negPath = arc(posDeg + neuDeg, negDeg)
+
   return (
-    <div className="flex flex-col items-center gap-4">
-      <svg width={136} height={136} viewBox="0 0 136 136">
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#F2F4F7" strokeWidth={15} />
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#16A34A" strokeWidth={15}
-          strokeDasharray={`${posLen} ${circ}`} strokeDashoffset={base} strokeLinecap="butt" />
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#D0D5DD" strokeWidth={15}
-          strokeDasharray={`${neutLen} ${circ}`} strokeDashoffset={base - (positive / 100) * circ} strokeLinecap="butt" />
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#DC2626" strokeWidth={15}
-          strokeDasharray={`${negLen} ${circ}`} strokeDashoffset={base - ((positive + neutral) / 100) * circ} strokeLinecap="butt" />
-        <text x={cx} y={cx - 7} textAnchor="middle" fontSize={21} fontWeight={700} fill="#101828">{positive}%</text>
-        <text x={cx} y={cx + 12} textAnchor="middle" fontSize={11} fill="#667085">Positive</text>
-      </svg>
-      <div className="flex items-center gap-5">
+    <div className="flex flex-col items-center gap-4 w-full">
+      <div className="w-[136px] h-[136px] shrink-0">
+        <svg viewBox="0 0 136 136" className="w-full h-full block">
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke="#F2F4F7" strokeWidth={15} />
+          {posPath && <path d={posPath} fill="none" stroke="#16A34A" strokeWidth={15} strokeLinecap="butt" />}
+          {neuPath && <path d={neuPath} fill="none" stroke="#D0D5DD" strokeWidth={15} strokeLinecap="butt" />}
+          {negPath && <path d={negPath} fill="none" stroke="#DC2626" strokeWidth={15} strokeLinecap="butt" />}
+          <text x={cx} y={cx - 7} textAnchor="middle" fontSize={21} fontWeight={700} fill="#101828">{positive}%</text>
+          <text x={cx} y={cx + 12} textAnchor="middle" fontSize={11} fill="#667085">Positive</text>
+        </svg>
+      </div>
+      <div className="flex items-center justify-center gap-3 flex-wrap w-full">
         {[{ label:'Positive', pct: positive, dot:'bg-positive' },
           { label:'Neutral',  pct: neutral,  dot:'bg-gray-300' },
           { label:'Negative', pct: negative, dot:'bg-negative' }].map(s => (
@@ -329,6 +359,100 @@ function SentimentDonut({ positive, neutral, negative }) {
             <span className="text-[12px] font-semibold text-neutral-800">{s.pct}%</span>
           </div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+function PlatformsEmptyState({ onSelectAll }) {
+  return (
+    <div className="flex-1 overflow-y-auto px-8 py-6">
+      <div className="bg-white rounded-xl border border-neutral-200 flex flex-col items-center justify-center text-center px-8 py-16 gap-5">
+        <div className="relative w-16 h-16 flex items-center justify-center">
+          <span className="absolute inset-0 rounded-full border border-dashed border-neutral-300" />
+          <div className="w-10 h-10 rounded-full bg-hl-blue-light flex items-center justify-center">
+            <Filter size={18} className="text-hl-blue" strokeWidth={2} />
+          </div>
+        </div>
+        <div className="flex flex-col gap-1.5 max-w-sm">
+          <p className="text-[16px] font-semibold text-neutral-900">Select at least one platform to see insights</p>
+          <p className="text-[13px] text-neutral-500 leading-relaxed">
+            Pick the platforms you want to analyze from the selector above, or start with all of them.
+          </p>
+        </div>
+        <button
+          onClick={onSelectAll}
+          className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-hl-blue text-white text-[13px] font-semibold hover:bg-hl-blue-dark transition-colors shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+        >
+          Select all platforms
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ─── Loader shown between search submit and dashboard render ─────────────────
+function InsightsLoader({ query }) {
+  const steps = [
+    { icon: Search,     label: 'Scanning platforms…' },
+    { icon: BarChart3,  label: 'Analyzing sentiment…' },
+    { icon: Sparkles,   label: 'Compiling insights…' },
+  ]
+  const [stepIdx, setStepIdx] = useState(0)
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setStepIdx(1), 600)
+    const t2 = setTimeout(() => setStepIdx(2), 1200)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [])
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-8 px-8">
+      <div className="relative w-32 h-32 flex items-center justify-center">
+        <span className="absolute inset-0 rounded-full bg-hl-blue-light animate-ping opacity-40" />
+        <span className="absolute inset-2 rounded-full bg-hl-blue-light animate-ping opacity-30" style={{ animationDelay: '0.3s' }} />
+        <span className="absolute inset-5 rounded-full bg-hl-blue-light animate-ping opacity-25" style={{ animationDelay: '0.6s' }} />
+        <div className="relative w-16 h-16 rounded-full bg-white border border-hl-blue-border shadow-sm flex items-center justify-center">
+          <Search size={24} className="text-hl-blue" strokeWidth={2} />
+        </div>
+      </div>
+
+      <div className="flex flex-col items-center gap-2 text-center">
+        <p className="text-[16px] font-semibold text-neutral-900">
+          Listening for "<span className="text-hl-blue">{query}</span>"
+        </p>
+        <p className="text-[13px] text-neutral-500 max-w-sm">
+          Pulling mentions, sentiment, and trends across every connected platform.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-2.5 min-w-[220px]">
+        {steps.map((s, i) => {
+          const Icon = s.icon
+          const done = i < stepIdx
+          const active = i === stepIdx
+          return (
+            <div key={s.label} className="flex items-center gap-2.5">
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                done ? 'bg-positive text-white' : active ? 'bg-hl-blue-light text-hl-blue' : 'bg-neutral-100 text-neutral-300'
+              }`}>
+                {done ? <Check size={12} strokeWidth={3} /> : <Icon size={11} strokeWidth={2.4} />}
+              </div>
+              <span className={`text-[13px] transition-colors ${
+                done ? 'text-neutral-700 font-medium' : active ? 'text-neutral-900 font-semibold' : 'text-neutral-400'
+              }`}>
+                {s.label}
+              </span>
+              {active && (
+                <span className="flex gap-0.5 ml-1">
+                  <span className="w-1 h-1 rounded-full bg-hl-blue animate-pulse" />
+                  <span className="w-1 h-1 rounded-full bg-hl-blue animate-pulse" style={{ animationDelay: '0.15s' }} />
+                  <span className="w-1 h-1 rounded-full bg-hl-blue animate-pulse" style={{ animationDelay: '0.3s' }} />
+                </span>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -347,6 +471,54 @@ export default function TopicDetailPage() {
   const [saved, setSaved] = useState(isSavedTopic)
   const [showToast, setShowToast] = useState(false)
   const [sentimentFilter, setSentimentFilter] = useState('all')
+  const [isLoading, setIsLoading] = useState(true)
+  const [activeSection, setActiveSection] = useState('overview')
+  const [showPlatformMenu, setShowPlatformMenu] = useState(false)
+  const scrollRef = useRef(null)
+  const platformMenuRef = useRef(null)
+
+  useEffect(() => {
+    function handleClick(e) {
+      if (platformMenuRef.current && !platformMenuRef.current.contains(e.target)) {
+        setShowPlatformMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  useEffect(() => {
+    setIsLoading(true)
+    const t = setTimeout(() => setIsLoading(false), 1800)
+    return () => clearTimeout(t)
+  }, [query])
+
+  useEffect(() => {
+    if (isLoading || selectedPlatforms.size === 0 || !scrollRef.current) return
+    const root = scrollRef.current
+    const sections = SECTION_NAV.map(s => document.getElementById(s.id)).filter(Boolean)
+    if (sections.length === 0) return
+
+    const observer = new IntersectionObserver(
+      entries => {
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+        if (visible[0]) setActiveSection(visible[0].target.id)
+      },
+      { root, rootMargin: '-20% 0px -70% 0px', threshold: 0 }
+    )
+    sections.forEach(s => observer.observe(s))
+    return () => observer.disconnect()
+  }, [isLoading, selectedPlatforms.size === 0])
+
+  function scrollToSection(id) {
+    const el = document.getElementById(id)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      setActiveSection(id)
+    }
+  }
 
   function handleSave() {
     const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
@@ -366,16 +538,19 @@ export default function TopicDetailPage() {
   }
 
   const allSelected = selectedPlatforms.size === SOCIAL_PLATFORMS.length
+  const noneSelected = selectedPlatforms.size === 0
 
   function togglePlatform(p) {
-    if (p === 'All') { setSelectedPlatforms(new Set(SOCIAL_PLATFORMS)); return }
     setSelectedPlatforms(prev => {
       const next = new Set(prev)
-      if (next.has(p)) { if (next.size === 1) return prev; next.delete(p) }
+      if (next.has(p)) next.delete(p)
       else next.add(p)
       return next
     })
   }
+
+  function selectAllPlatforms() { setSelectedPlatforms(new Set(SOCIAL_PLATFORMS)) }
+  function clearAllPlatforms() { setSelectedPlatforms(new Set()) }
 
   const computed = useMemo(() => {
     const pList = SOCIAL_PLATFORMS.filter(p => selectedPlatforms.has(p))
@@ -445,9 +620,59 @@ export default function TopicDetailPage() {
   const axisStyle = { fontSize: 10, fill: '#98A2B3' }
   const gridStyle = { stroke: '#F2F4F7', strokeDasharray: '3 3' }
 
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex min-h-0 bg-gray-50 p-4 gap-4">
+        <aside className="w-[160px] shrink-0 py-2">
+          <nav className="flex flex-col gap-0.5">
+            {SECTION_NAV.map((s, i) => {
+              const widths = ['w-3/5', 'w-4/5', 'w-3/4', 'w-2/3', 'w-3/5', 'w-4/5', 'w-[88%]', 'w-2/3']
+              const isFirst = i === 0
+              return (
+                <div key={s.id} className="px-3 py-2">
+                  <div
+                    className={`h-3 rounded animate-pulse ${widths[i % widths.length]} ${isFirst ? 'bg-gray-200' : 'bg-gray-100'}`}
+                    style={{ animationDelay: `${i * 0.1}s` }}
+                  />
+                </div>
+              )
+            })}
+          </nav>
+        </aside>
+        <div className="bg-white rounded-xl shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.08),0px_4px_6px_-2px_rgba(16,24,40,0.03)] flex flex-col flex-1 overflow-hidden">
+          <InsightsLoader query={query} />
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-gray-50 p-4">
-      <div className="bg-white rounded-xl shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.08),0px_4px_6px_-2px_rgba(16,24,40,0.03)] flex flex-col flex-1 overflow-hidden">
+    <div className="flex-1 flex min-h-0 bg-gray-50 p-4 gap-4">
+
+      {/* Vertical section nav — outside the white canvas */}
+      <aside className="w-[160px] shrink-0 py-2 sticky top-4 self-start">
+        <nav className="flex flex-col gap-0.5">
+          {SECTION_NAV.map(s => {
+            const active = activeSection === s.id
+            return (
+              <button
+                key={s.id}
+                onClick={() => scrollToSection(s.id)}
+                className={`relative flex items-center text-left px-3 py-2 rounded-md text-[13px] transition-colors ${
+                  active
+                    ? 'bg-hl-blue-light text-hl-blue font-semibold'
+                    : 'text-neutral-600 hover:bg-white hover:text-neutral-900 font-medium'
+                }`}
+              >
+                {active && <span className="absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-r bg-hl-blue" />}
+                {s.label}
+              </button>
+            )
+          })}
+        </nav>
+      </aside>
+
+      <div className="bg-white rounded-xl shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.08),0px_4px_6px_-2px_rgba(16,24,40,0.03)] flex flex-col flex-1 min-w-0 min-h-0 overflow-hidden">
 
         {/* ── Toolbar ── */}
         <div className="border-b border-neutral-200 px-8 py-2.5 flex items-center gap-3 shrink-0">
@@ -461,25 +686,76 @@ export default function TopicDetailPage() {
           <p className="text-[14px] font-semibold text-neutral-900 shrink-0 max-w-[200px] truncate">"{query}"</p>
           <div className="w-px h-5 bg-neutral-200 shrink-0" />
 
-          {/* Multi-select platform chips */}
-          <div className="flex items-center gap-1.5 flex-1 overflow-x-auto">
+          {/* Platform multi-select dropdown */}
+          <div className="relative flex-1" ref={platformMenuRef}>
             <button
-              onClick={() => togglePlatform('All')}
-              className={`px-2.5 py-1 rounded-full text-[12px] font-medium whitespace-nowrap transition-all ${
-                allSelected ? 'bg-hl-blue-light text-hl-blue border border-hl-blue-border' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
-              }`}
-            >All</button>
-            {SOCIAL_PLATFORMS.map(p => (
-              <button
-                key={p}
-                onClick={() => togglePlatform(p)}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium whitespace-nowrap transition-all ${
-                  selectedPlatforms.has(p) ? 'bg-hl-blue-light text-hl-blue border border-hl-blue-border' : 'bg-gray-100 text-neutral-600 hover:bg-gray-200'
-                }`}
-              >
-                <PlatformIcon name={p} size={14} />{p}
-              </button>
-            ))}
+              onClick={() => setShowPlatformMenu(v => !v)}
+              className="flex items-center gap-2 h-7 px-2.5 rounded-md border border-neutral-200 text-[12px] text-neutral-700 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex -space-x-1">
+                {noneSelected ? (
+                  <div className="w-4 h-4 rounded-full bg-neutral-100 border border-dashed border-neutral-300" />
+                ) : (
+                  [...selectedPlatforms].slice(0, 3).map(p => (
+                    <div key={p} className="w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-white" style={{ background: PLATFORM_CONFIG[p].color }}>
+                      <span className="text-white text-[8px] font-semibold">{p[0]}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+              <span className="font-medium">
+                {noneSelected
+                  ? 'No platforms'
+                  : allSelected
+                    ? 'All platforms'
+                    : `${selectedPlatforms.size} ${selectedPlatforms.size === 1 ? 'platform' : 'platforms'}`}
+              </span>
+              <ChevronDown size={12} className="text-neutral-400" />
+            </button>
+            {showPlatformMenu && (
+              <div className="absolute top-full left-0 mt-1.5 w-56 bg-white border border-neutral-200 rounded-lg shadow-lg z-30 py-1.5">
+                <div className="flex items-center justify-between px-3 py-1.5 border-b border-neutral-100">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">Platforms</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={selectAllPlatforms}
+                      disabled={allSelected}
+                      className="text-[12px] font-semibold text-hl-blue hover:underline disabled:text-neutral-300 disabled:no-underline disabled:cursor-not-allowed"
+                    >
+                      Select all
+                    </button>
+                    <span className="w-px h-3 bg-neutral-200" />
+                    <button
+                      onClick={clearAllPlatforms}
+                      disabled={noneSelected}
+                      className="text-[12px] font-semibold text-hl-blue hover:underline disabled:text-neutral-300 disabled:no-underline disabled:cursor-not-allowed"
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                </div>
+                <div className="py-1">
+                  {SOCIAL_PLATFORMS.map(p => {
+                    const checked = selectedPlatforms.has(p)
+                    return (
+                      <button
+                        key={p}
+                        onClick={() => togglePlatform(p)}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-gray-50 transition-colors text-left"
+                      >
+                        <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
+                          checked ? 'bg-hl-blue border-hl-blue' : 'border-neutral-300 bg-white'
+                        }`}>
+                          {checked && <Check size={11} strokeWidth={3} className="text-white" />}
+                        </div>
+                        <PlatformIcon name={p} size={14} />
+                        <span className="text-[13px] text-neutral-800 flex-1">{p}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
@@ -519,11 +795,14 @@ export default function TopicDetailPage() {
           </div>
         </div>
 
-        {/* ── Body ── */}
-        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-10">
+        {/* ── Scrollable content ── */}
+        {noneSelected ? (
+          <PlatformsEmptyState onSelectAll={selectAllPlatforms} />
+        ) : (
+        <div ref={scrollRef} className="flex-1 overflow-y-auto px-8 py-6 space-y-10">
 
           {/* ─ KPI Cards ─ */}
-          <div className="flex flex-col gap-2">
+          <div id="overview" className="flex flex-col gap-2 scroll-mt-4">
             <p className="text-[12px] text-neutral-400">Last updated 2 hours ago · {dateRange} · {computed.totalMentions.toLocaleString()} mentions</p>
             <div className="grid grid-cols-5 gap-3">
               {[
@@ -543,7 +822,7 @@ export default function TopicDetailPage() {
           </div>
 
           {/* ─ Sentiment Analysis ─ */}
-          <div>
+          <div id="sentiment" className="scroll-mt-4">
             <SectionHeader label="Sentiment analysis" />
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm flex flex-col">
@@ -587,7 +866,7 @@ export default function TopicDetailPage() {
           </div>
 
           {/* ─ Mentions ─ */}
-          <div>
+          <div id="mentions" className="scroll-mt-4">
             <SectionHeader label="Mentions" />
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
@@ -636,7 +915,7 @@ export default function TopicDetailPage() {
           </div>
 
           {/* ─ Platform Intelligence ─ */}
-          <div>
+          <div id="platforms" className="scroll-mt-4">
             <SectionHeader label="Platform intelligence" />
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
@@ -685,7 +964,7 @@ export default function TopicDetailPage() {
           </div>
 
           {/* ─ Emotion & Keywords ─ */}
-          <div>
+          <div id="emotion" className="scroll-mt-4">
             <SectionHeader label="Emotion & keywords" />
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
@@ -728,7 +1007,7 @@ export default function TopicDetailPage() {
           </div>
 
           {/* ─ Engagement ─ */}
-          <div>
+          <div id="engagement" className="scroll-mt-4">
             <SectionHeader label="Engagement" />
             <div className="grid grid-cols-4 gap-3 mb-4">
               {[
@@ -784,7 +1063,7 @@ export default function TopicDetailPage() {
           </div>
 
           {/* ─ Conversation Insights ─ */}
-          <div>
+          <div id="conversations" className="scroll-mt-4">
             <SectionHeader label="Conversation insights" />
             <div className="grid grid-cols-3 gap-4">
               <div className="flex flex-col gap-4">
@@ -906,7 +1185,7 @@ export default function TopicDetailPage() {
           </div>
 
           {/* ─ Audience Insights ─ */}
-          <div>
+          <div id="audience" className="scroll-mt-4">
             <SectionHeader label="Audience insights" />
             <div className="grid grid-cols-4 gap-4">
               <div className="bg-white rounded-xl border border-neutral-200 p-5 shadow-sm">
@@ -968,6 +1247,7 @@ export default function TopicDetailPage() {
           </div>
 
         </div>
+        )}
       </div>
 
       {showToast && (

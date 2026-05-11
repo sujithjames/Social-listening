@@ -177,7 +177,30 @@ Currently used by `TopicsPage`. Reuse in any new page that needs a title + subti
 
 ---
 
-## 13. Evolving This File
+## 13. Table Column Header Pattern (Locked)
+
+For sortable columns in data tables (`ColumnHeader` component):
+
+- Use `<span className="inline-flex items-center gap-1.5">` inside `<th>` — **never** a block `<div>` or `flex-row-reverse`
+- `inline-flex` is inline-level, so it responds correctly to `text-right` / `text-left` on the parent `<th>`
+- DOM order is always: `[label] [sort arrow if active] [filter icon]` — filter icon is always to the **right** of the label
+- For right-aligned numeric columns (e.g. "30 day volume", "% Change"): add `text-right` on `<th>`, which right-aligns the `inline-flex` group inside it
+- **Never use `flex-row-reverse`** — it reverses the visual order and puts the filter icon to the left of the label (a confirmed bug)
+- **Never use `flex justify-end` on a block div** inside `<th>` — table cells can size the div to content, making `justify-end` a no-op
+
+```jsx
+<th className={`px-4 py-2.5 text-[12px] font-medium text-neutral-500 ${align === 'right' ? 'text-right' : 'text-left'}`}>
+  <span className="inline-flex items-center gap-1.5">
+    <span>{label}</span>
+    {active && <SortArrowIcon />}
+    <ColumnSortMenu />
+  </span>
+</th>
+```
+
+---
+
+## 14. Evolving This File
 
 When a new design decision is confirmed (new token, new pattern, new frozen component), **add it here** so it's available in future sessions without re-briefing.
 

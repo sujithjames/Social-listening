@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useId } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Trash2, TrendingUp, RefreshCw, ChevronDown, Calendar, Globe, Tag, AtSign } from 'lucide-react'
+import { Search, Plus, Trash2, TrendingUp, TrendingDown, RefreshCw, ChevronDown, Calendar, Globe, Tag, AtSign, LayoutGrid, List, ArrowUp, ArrowDown, MoreVertical, Filter, ExternalLink, Check } from 'lucide-react'
 import { siReddit } from 'simple-icons'
 import CreateTopicModal from '../components/CreateTopicModal'
+import PlatformIcon from '../components/PlatformIcon'
 
 const STORAGE_KEY = 'sl.topics.v1'
 const TOTAL_SEARCHES = 0
@@ -12,6 +14,16 @@ const SOURCE_LABELS = {
   facebook: 'Facebook', twitter: 'X', instagram: 'Instagram',
   youtube: 'YouTube', tiktok: 'TikTok', linkedin: 'LinkedIn',
   reddit: 'Reddit', web: 'Web', telegram: 'Telegram', news: 'News',
+}
+
+const SOURCE_TO_PLATFORM = {
+  facebook: 'Facebook', twitter: 'X / Twitter', instagram: 'Instagram',
+  youtube: 'YouTube', tiktok: 'TikTok', linkedin: 'LinkedIn',
+  reddit: 'Reddit', web: 'Web', telegram: 'Telegram', news: 'News',
+  // Topic detail page saves capitalized platform names
+  X: 'X / Twitter', Instagram: 'Instagram', Reddit: 'Reddit',
+  YouTube: 'YouTube', News: 'News', LinkedIn: 'LinkedIn',
+  TikTok: 'TikTok', Facebook: 'Facebook',
 }
 
 const PLATFORM_COLORS = {
@@ -116,6 +128,16 @@ const RANK_STYLE = {
   3: { text: 'text-orange-400', bg: 'bg-orange-50' },
 }
 
+const CREATED_BY_USERS = [
+  { name: 'Devon Lane',   color: '#155EEF' },
+  { name: 'Sarah Chen',   color: '#16A34A' },
+  { name: 'Marcus Reid',  color: '#7C3AED' },
+]
+
+function getCreatedBy(topicId) {
+  return CREATED_BY_USERS[(topicId || 0) % CREATED_BY_USERS.length]
+}
+
 function loadTopicsFromStorage() {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
@@ -132,91 +154,6 @@ function saveTopicsToStorage(topics) {
     console.error('Failed to save topics to localStorage')
   }
 }
-
-function PlatformIcon({ platform, size = 32 }) {
-  const s = size
-  switch (platform) {
-    case 'Google':
-      return (
-        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="16" fill="#fff" />
-          <path d="M27.2 16.27c0-.79-.07-1.55-.2-2.27H16v4.3h6.27a5.36 5.36 0 0 1-2.32 3.52v2.92h3.75c2.2-2.02 3.5-5 3.5-8.47Z" fill="#4285F4"/>
-          <path d="M16 28c3.15 0 5.79-1.04 7.72-2.82l-3.75-2.92c-1.04.7-2.38 1.11-3.97 1.11-3.05 0-5.63-2.06-6.55-4.83H5.57v3.02A11.99 11.99 0 0 0 16 28Z" fill="#34A853"/>
-          <path d="M9.45 18.54A7.23 7.23 0 0 1 9.07 16c0-.88.15-1.73.38-2.54V10.44H5.57A12 12 0 0 0 4 16c0 1.94.46 3.77 1.57 5.56l3.88-3.02Z" fill="#FBBC05"/>
-          <path d="M16 8.64c1.72 0 3.26.59 4.48 1.75l3.35-3.35C21.79 5.14 19.15 4 16 4a12 12 0 0 0-10.43 6.44l3.88 3.02C10.37 10.7 12.95 8.64 16 8.64Z" fill="#EA4335"/>
-        </svg>
-      )
-    case 'Pinterest':
-      return (
-        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="16" fill="#E60023"/>
-          <path d="M16 5C10 5 5 10 5 16c0 4.67 2.89 8.67 7.01 10.3-.1-.87-.18-2.2.04-3.14.2-.84 1.34-5.67 1.34-5.67s-.34-.68-.34-1.69c0-1.58.92-2.77 2.06-2.77.97 0 1.44.73 1.44 1.6 0 .98-.62 2.44-.94 3.8-.27 1.14.56 2.06 1.67 2.06 2 0 3.55-2.11 3.55-5.15 0-2.69-1.94-4.58-4.7-4.58-3.2 0-5.08 2.4-5.08 4.88 0 .97.37 2 .84 2.57a.34.34 0 0 1 .08.33c-.09.36-.28 1.14-.32 1.3-.05.21-.17.26-.38.16-1.4-.65-2.27-2.7-2.27-4.35 0-3.54 2.57-6.8 7.4-6.8 3.89 0 6.91 2.77 6.91 6.47 0 3.86-2.43 6.97-5.81 6.97-1.13 0-2.2-.59-2.57-1.28l-.7 2.6c-.25.97-.93 2.18-1.39 2.92A11 11 0 0 0 16 27c6.08 0 11-4.92 11-11 0-6.08-4.92-11-11-11Z" fill="white"/>
-        </svg>
-      )
-    case 'X / Twitter':
-      return (
-        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="16" fill="#0F172A"/>
-          <path d="M18.24 14.87 24.07 8h-1.38l-5.07 5.88L13.26 8H8.4l6.1 8.88L8.4 24h1.38l5.33-6.19L19.44 24H24.3l-6.06-9.13Zm-1.88 2.19-.62-.88-4.92-7.03h2.11l3.97 5.67.62.88 5.15 7.36h-2.11l-4.2-5.99Z" fill="white"/>
-        </svg>
-      )
-    case 'YouTube':
-      return (
-        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="16" fill="#FF0000"/>
-          <path d="M24.7 12.1a2.27 2.27 0 0 0-1.6-1.61C21.6 10.1 16 10.1 16 10.1s-5.6 0-7.1.4a2.27 2.27 0 0 0-1.6 1.6c-.4 1.5-.4 4.6-.4 4.6s0 3.1.4 4.6a2.27 2.27 0 0 0 1.6 1.6c1.5.4 7.1.4 7.1.4s5.6 0 7.1-.4a2.27 2.27 0 0 0 1.6-1.6c.4-1.5.4-4.6.4-4.6s0-3.1-.4-4.6Z" fill="white" fillOpacity="0.9"/>
-          <path d="M14.2 18.8V13l4.7 2.9-4.7 2.9Z" fill="#FF0000"/>
-        </svg>
-      )
-    case 'TikTok':
-      return (
-        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="16" fill="#0F172A"/>
-          <path d="M21 9h-2.5v9.5a2.5 2.5 0 1 1-2.5-2.5V13.5a5 5 0 1 0 5 5V13.2a6.8 6.8 0 0 0 4 1.3v-2.5A4.2 4.2 0 0 1 21 9Z" fill="white"/>
-        </svg>
-      )
-    case 'LinkedIn':
-      return (
-        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="16" fill="#0077B5"/>
-          <path d="M10.5 13.5h2.5v9h-2.5v-9Zm1.25-4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM15 13.5h2.4v1.2h.04c.33-.63 1.15-1.3 2.36-1.3 2.53 0 3 1.67 3 3.84V22.5h-2.5v-4.8c0-.93-.02-2.13-1.3-2.13-1.3 0-1.5 1.02-1.5 2.07V22.5H15v-9Z" fill="white"/>
-        </svg>
-      )
-    case 'Instagram':
-      return (
-        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="16" fill="#E1306C"/>
-          <rect x="8.5" y="8.5" width="15" height="15" rx="4.5" stroke="white" strokeWidth="1.5"/>
-          <circle cx="16" cy="16" r="4" stroke="white" strokeWidth="1.5"/>
-          <circle cx="21" cy="11" r="1.2" fill="white"/>
-        </svg>
-      )
-    case 'Reddit':
-      return (
-        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="16" fill="#FF4500"/>
-          <g transform="translate(7, 7) scale(0.75)">
-            <path d={siReddit.path} fill="white"/>
-          </g>
-        </svg>
-      )
-    case 'Wikipedia':
-      return (
-        <svg width={s} height={s} viewBox="0 0 32 32" fill="none">
-          <circle cx="16" cy="16" r="16" fill="white"/>
-          <circle cx="16" cy="16" r="13" stroke="#A2A9B1" strokeWidth="0.8" strokeDasharray="2.5 2"/>
-          <text x="16" y="21.5" textAnchor="middle" fontSize="15" fontWeight="700" fontFamily="Georgia, serif" fontStyle="italic" fill="#101828">W</text>
-        </svg>
-      )
-    default:
-      return (
-        <div style={{ width: s, height: s, borderRadius: '50%', background: '#155EEF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: s * 0.35, fontWeight: 700 }}>
-          {platform[0]}
-        </div>
-      )
-  }
-}
-
 
 function Sparkline({ path }) {
   const uid = useId()
@@ -252,6 +189,8 @@ export default function SearchPage() {
   const [trackDefault, setTrackDefault] = useState('')
   const [topics, setTopics] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [topicsView, setTopicsView] = useState('list')
+  const [topicsFilter, setTopicsFilter] = useState('')
   const searchRef = useRef(null)
   const navigate = useNavigate()
 
@@ -309,6 +248,22 @@ export default function SearchPage() {
     ? Math.round(topics.reduce((sum, t) => sum + t.sentiment, 0) / topics.length)
     : 0
 
+  const positiveCount = topics.reduce((sum, t) => sum + Math.round(t.mentions * t.sentiment / 100), 0)
+  const negativeCount = topics.reduce((sum, t) => sum + Math.round(t.mentions * (100 - t.sentiment) * 0.3 / 100), 0)
+  const neutralCount = Math.max(0, totalMentions - positiveCount - negativeCount)
+  const avgNegativePct = topics.length > 0
+    ? Math.round(topics.reduce((sum, t) => sum + (100 - t.sentiment) * 0.3, 0) / topics.length)
+    : 0
+  const netScore = avgSentiment - avgNegativePct
+
+  const filteredTopics = topicsFilter.trim()
+    ? topics.filter(t => {
+        const q = topicsFilter.toLowerCase()
+        return t.name.toLowerCase().includes(q) ||
+          (Array.isArray(t.keywords) ? t.keywords : []).some(k => k.toLowerCase().includes(q))
+      })
+    : topics
+
   return (
     <div className="flex-1 flex flex-col p-4">
       <div className="bg-white rounded-xl shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.08),0px_4px_6px_-2px_rgba(16,24,40,0.03)] flex flex-col flex-1 overflow-hidden">
@@ -340,7 +295,7 @@ export default function SearchPage() {
         </div>
 
         {/* ── Search section ── */}
-        <div className="px-8 pb-5 flex flex-col gap-1.5">
+        <div className="px-8 pb-6 flex flex-col gap-2">
           <label className="text-[14px] font-medium text-gray-700">Explore</label>
           <form onSubmit={handleSearch} className="flex items-center gap-2.5">
             <div className="relative flex-1" ref={searchRef}>
@@ -388,15 +343,12 @@ export default function SearchPage() {
               Search
             </button>
           </form>
-          <p className="text-[13px] text-gray-600">
-            Search brands, keywords, or people to uncover real-time insights and trends.
-          </p>
         </div>
 
         {/* ── Tab content ── */}
         {activeTab === 'Topic' ? (
-          <div className="flex-1 overflow-y-auto px-8 pb-5">
-            <div className="flex flex-col gap-5">
+          <div className="flex-1 overflow-y-auto px-8 pb-8">
+            <div className="flex flex-col gap-10">
 
               {topics.length === 0 ? (
                 /* Blank state: illustration + CTA */
@@ -417,14 +369,14 @@ export default function SearchPage() {
                   </button>
                 </div>
               ) : (
-                /* Topics state: summary → cards */
-                <div className="space-y-4 pt-2">
+                /* Topics state: summary → cards/list */
+                <div className="space-y-6 pt-1">
                   <div className="flex items-end justify-between">
                     <div>
-                      <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Your listening topics</p>
                       <p className="text-[16px] font-semibold text-gray-900">
                         {topics.length} active {topics.length === 1 ? 'topic' : 'topics'}
                       </p>
+                      <p className="text-[13px] text-gray-500 mt-0.5">Auto-refreshed every 6 hours</p>
                     </div>
                     <button
                       onClick={() => setShowModal(true)}
@@ -435,55 +387,109 @@ export default function SearchPage() {
                     </button>
                   </div>
 
-                  {/* Summary stats */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
-                      <p className="text-[12px] text-gray-500 font-medium mb-1">Total mentions</p>
-                      <p className="text-[24px] font-semibold text-gray-900">{totalMentions.toLocaleString()}</p>
+                  {/* Summary stats — 5 equal cards */}
+                  <div className="grid grid-cols-5 gap-4">
+                    {/* Total mentions */}
+                    <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col gap-1.5">
+                      <p className="text-[13px] font-medium text-gray-500">Total mentions</p>
+                      <p className="text-[24px] font-semibold text-gray-900 leading-none">{totalMentions.toLocaleString()}</p>
+                      <span className="text-[11px] text-positive font-medium">↑ 12% vs prev</span>
                     </div>
-                    <div className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
-                      <p className="text-[12px] text-gray-500 font-medium mb-1">Avg sentiment</p>
-                      <p className="text-[24px] font-semibold text-positive">{avgSentiment}%</p>
+
+                    {/* Positive */}
+                    <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col gap-1.5">
+                      <p className="text-[13px] font-medium text-gray-500">Positive</p>
+                      <p className="text-[24px] font-semibold text-gray-900 leading-none">{positiveCount.toLocaleString()}</p>
+                      <span className="text-[11px] text-positive font-medium">↑ 5% vs prev</span>
                     </div>
-                    <div className="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
-                      <p className="text-[12px] text-gray-500 font-medium mb-1">Active topics</p>
-                      <p className="text-[24px] font-semibold text-gray-900">{topics.length}</p>
+
+                    {/* Neutral */}
+                    <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col gap-1.5">
+                      <p className="text-[13px] font-medium text-gray-500">Neutral</p>
+                      <p className="text-[24px] font-semibold text-gray-900 leading-none">{neutralCount.toLocaleString()}</p>
+                      <span className="text-[11px] text-negative font-medium">↓ 1% vs prev</span>
+                    </div>
+
+                    {/* Negative */}
+                    <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col gap-1.5">
+                      <p className="text-[13px] font-medium text-gray-500">Negative</p>
+                      <p className="text-[24px] font-semibold text-gray-900 leading-none">{negativeCount.toLocaleString()}</p>
+                      <span className="text-[11px] text-negative font-medium">↓ 2% vs prev</span>
+                    </div>
+
+                    {/* Net sentiment */}
+                    <div className="bg-white rounded-xl border border-gray-100 p-5 flex flex-col gap-1.5">
+                      <p className="text-[13px] font-medium text-gray-500">Net sentiment</p>
+                      <p className="text-[24px] font-semibold text-gray-900 leading-none">{netScore} pts</p>
+                      <span className="text-[11px] text-positive font-medium">↑ 7 pts vs prev</span>
                     </div>
                   </div>
 
-                  {/* Topic cards */}
-                  <div className="grid grid-cols-3 gap-3">
-                    {topics.map(topic => (
-                      <TopicCard
-                        key={topic.id}
-                        topic={topic}
-                        onDelete={() => handleDeleteTopic(topic.id)}
-                        onClick={() => navigate('/topic-detail', { state: { query: topic.name, isSavedTopic: true } })}
+                  <div className="space-y-3">
+                    {/* Block 1: shared controls — retained across both views */}
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-[13px] text-neutral-500">{filteredTopics.length} of {topics.length} topics</p>
+                      <div className="flex items-center gap-2">
+                        <ViewToggle topicsView={topicsView} setTopicsView={setTopicsView} />
+                        <div className="relative">
+                          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
+                          <input
+                            type="text"
+                            value={topicsFilter}
+                            onChange={e => setTopicsFilter(e.target.value)}
+                            placeholder="Filter topics..."
+                            className="w-56 h-8 pl-8 pr-3 rounded-md border border-gray-300 bg-white text-[13px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-hl-blue shadow-[0px_1px_2px_rgba(16,24,40,0.05)] transition-all"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {topicsView === 'list' ? (
+                      <TopicsList
+                        topics={filteredTopics}
+                        filter={topicsFilter}
+                        onRowClick={topic => navigate('/topic-detail', { state: { query: topic.name, isSavedTopic: true } })}
+                        onDelete={handleDeleteTopic}
                       />
-                    ))}
+                    ) : (
+                      filteredTopics.length === 0 ? (
+                        <div className="bg-white rounded-xl border border-gray-100 text-center py-12 text-neutral-400">
+                          <p className="text-[13px]">No topics match "{topicsFilter}"</p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-3 gap-4">
+                          {filteredTopics.map(topic => (
+                            <TopicCard
+                              key={topic.id}
+                              topic={topic}
+                              onDelete={() => handleDeleteTopic(topic.id)}
+                              onClick={() => navigate('/topic-detail', { state: { query: topic.name, isSavedTopic: true } })}
+                            />
+                          ))}
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
               )}
 
               {/* Trending section — always visible */}
-              <div className="border-t border-gray-100 pt-5 space-y-4 pb-2">
+              <div className="pt-2 space-y-6 pb-2">
+                <div className="h-px bg-gray-100 -mx-1" />
                 <div className="flex items-end justify-between">
-                  <div>
-                    <p className="text-[12px] font-semibold text-gray-400 uppercase tracking-widest mb-1">What's trending elsewhere</p>
-                    <p className="text-[16px] font-semibold text-gray-900">A peek at what's trending right now</p>
-                  </div>
+                  <p className="text-[16px] font-semibold text-gray-900">Trending now</p>
                   <button onClick={() => setActiveTab('Social trends')} className="text-[13px] font-semibold text-hl-blue hover:underline flex items-center gap-1">
                     See all trends →
                   </button>
                 </div>
 
                 <div className="relative -mx-5">
-                  <div className="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth px-5 pb-1" style={{ scrollSnapType: 'x mandatory', scrollPaddingLeft: '20px' }}>
+                  <div className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth px-5 pb-1" style={{ scrollSnapType: 'x mandatory', scrollPaddingLeft: '20px' }}>
                     {TRENDING_DATA.map(trend => (
                       <div
                         key={trend.id}
                         onClick={() => navigate('/topic-detail', { state: { query: trend.hashtag } })}
-                        className="w-[200px] shrink-0 bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-2.5 hover:shadow-md hover:border-gray-300 transition-all cursor-pointer"
+                        className="w-[200px] shrink-0 bg-white rounded-xl border border-gray-100 p-4 flex flex-col gap-2.5 hover:shadow-sm hover:border-gray-200 transition-all cursor-pointer"
                         style={{ scrollSnapAlign: 'start' }}
                       >
                         <div>
@@ -500,7 +506,7 @@ export default function SearchPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="pointer-events-none absolute right-0 top-0 bottom-1 w-14 bg-gradient-to-l from-white to-transparent" />
+                  <div className="pointer-events-none absolute right-0 top-0 bottom-1 w-20 bg-gradient-to-l from-white to-transparent" />
                 </div>
               </div>
 
@@ -524,7 +530,7 @@ export default function SearchPage() {
 
 function TopicCard({ topic, onDelete, onClick }) {
   return (
-    <div onClick={onClick} className="bg-white rounded-xl border border-gray-200 p-3.5 flex flex-col gap-2.5 hover:shadow-md hover:border-gray-300 transition-all relative group cursor-pointer">
+    <div onClick={onClick} className="bg-white rounded-xl border border-gray-100 p-3.5 flex flex-col gap-2.5 hover:shadow-sm hover:border-gray-200 transition-all relative group cursor-pointer">
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <p className="text-[13px] font-semibold text-gray-900 leading-snug">{topic.name}</p>
@@ -583,15 +589,11 @@ function TopicCard({ topic, onDelete, onClick }) {
 }
 
 function SourceIcon({ src }) {
-  const color = PLATFORM_COLORS[src] || '#475467'
   const label = SOURCE_LABELS[src] || src
+  const platformName = SOURCE_TO_PLATFORM[src]
   return (
-    <div
-      title={label}
-      className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[12px] font-semibold shrink-0"
-      style={{ background: color }}
-    >
-      {label[0]}
+    <div title={label} className="shrink-0">
+      <PlatformIcon platform={platformName} size={24} />
     </div>
   )
 }
@@ -789,6 +791,400 @@ function SocialTrendsTab({ onTrack }) {
           items={WIKIPEDIA_TRENDS}
           onTrack={onTrack}
         />
+      </div>
+    </div>
+  )
+}
+
+function deriveTopicMetrics(topic) {
+  const seed = (topic.id || 0) % 100
+  const volume30d = topic.mentions ? topic.mentions * 8 + seed * 37 : 5000 + seed * 120
+  const change30d = ((seed % 50) - 10)
+  const createdDate = topic.updated === 'Just now' ? 'Today' : 'Apr 8, 2026'
+  return { volume30d, change30d, createdDate }
+}
+
+function TopicSourceBadge({ src }) {
+  const label = SOURCE_LABELS[src] || src
+  const platformName = SOURCE_TO_PLATFORM[src]
+  return (
+    <div title={label} className="shrink-0 ring-2 ring-white rounded-full">
+      <PlatformIcon platform={platformName} size={20} />
+    </div>
+  )
+}
+
+function ChangeIndicator({ value }) {
+  const up = value >= 0
+  const Icon = up ? TrendingUp : TrendingDown
+  const color = up ? 'text-positive' : 'text-negative'
+  return (
+    <span className={`inline-flex items-center gap-1 text-[13px] font-medium ${color}`}>
+      <Icon size={13} strokeWidth={2} />
+      {up ? '+' : ''}{value}%
+    </span>
+  )
+}
+
+function sortValueFor(topic, key) {
+  switch (key) {
+    case 'name':        return topic.name.toLowerCase()
+    case 'sources':     return (topic.sources || []).length
+    case 'keywords':    return (Array.isArray(topic.keywords) ? topic.keywords : []).length
+    case 'createdBy':   return getCreatedBy(topic.id).name.toLowerCase()
+    case 'createdDate': return topic.createdDate
+    case 'volume30d':   return topic.volume30d
+    case 'change30d':   return topic.change30d
+    default:            return ''
+  }
+}
+
+function TopicsList({ topics, filter, onRowClick, onDelete }) {
+  const [sortKey, setSortKey] = useState(null)
+  const [sortDir, setSortDir] = useState('asc')
+
+  let rows = topics.map(t => ({ ...t, ...deriveTopicMetrics(t) }))
+
+  if (sortKey) {
+    rows = [...rows].sort((a, b) => {
+      const av = sortValueFor(a, sortKey)
+      const bv = sortValueFor(b, sortKey)
+      if (typeof av === 'number') return sortDir === 'asc' ? av - bv : bv - av
+      return sortDir === 'asc' ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av))
+    })
+  }
+
+  function setSort(key, dir) {
+    setSortKey(key)
+    setSortDir(dir)
+  }
+
+  const [page, setPage] = useState(1)
+  const [perPage, setPerPage] = useState(15)
+
+  useEffect(() => { setPage(1) }, [topics.length, sortKey, sortDir, perPage])
+
+  const total = rows.length
+  const lastPage = Math.max(1, Math.ceil(total / perPage))
+  const safePage = Math.min(page, lastPage)
+  const start = total === 0 ? 0 : (safePage - 1) * perPage + 1
+  const end = Math.min(safePage * perPage, total)
+  const paged = rows.slice((safePage - 1) * perPage, safePage * perPage)
+
+  return (
+    <>
+      {/* Block 2: table card — table only */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {rows.length === 0 ? (
+          <div className="text-center py-12 text-neutral-400">
+            <p className="text-[13px]">No topics match "{filter}"</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <ColumnHeader label="Topic title"   sortKey="name"        current={sortKey} dir={sortDir} onSort={setSort} />
+                  <ColumnHeader label="Network"       sortKey="sources"     current={sortKey} dir={sortDir} onSort={setSort} />
+                  <ColumnHeader label="Keywords"      sortKey="keywords"    current={sortKey} dir={sortDir} onSort={setSort} />
+                  <ColumnHeader label="Created by"    sortKey="createdBy"   current={sortKey} dir={sortDir} onSort={setSort} />
+                  <ColumnHeader label="Created date"  sortKey="createdDate" current={sortKey} dir={sortDir} onSort={setSort} />
+                  <ColumnHeader label="30 day volume" sortKey="volume30d"   current={sortKey} dir={sortDir} onSort={setSort} align="right" />
+                  <ColumnHeader label="% Change"      sortKey="change30d"   current={sortKey} dir={sortDir} onSort={setSort} align="right" />
+                  <th className="w-10 px-2 py-2.5"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {paged.map(t => {
+                  const createdBy = getCreatedBy(t.id)
+                  return (
+                    <tr
+                      key={t.id}
+                      onClick={() => onRowClick(t)}
+                      className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors cursor-pointer group"
+                    >
+                      <td className="px-4 py-3 text-[14px] font-medium text-neutral-900">{t.name}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex -space-x-1.5">
+                          {(t.sources || []).slice(0, 5).map(s => <TopicSourceBadge key={s} src={s} />)}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {(Array.isArray(t.keywords) ? t.keywords : []).slice(0, 2).map((k, i) => (
+                            <span key={i} className="text-[12px] font-medium text-hl-blue bg-hl-blue-light px-1.5 py-0.5 rounded">{k}</span>
+                          ))}
+                          {Array.isArray(t.keywords) && t.keywords.length > 2 && (
+                            <span className="text-[12px] text-neutral-400">+{t.keywords.length - 2}</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <UserAvatar user={createdBy} />
+                          <span className="text-[13px] text-neutral-700 font-medium">{createdBy.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-[13px] text-neutral-600">{t.createdDate}</td>
+                      <td className="px-4 py-3 text-[14px] font-semibold text-neutral-900 text-right tabular-nums">{t.volume30d.toLocaleString()}</td>
+                      <td className="px-4 py-3 text-right"><ChangeIndicator value={t.change30d} /></td>
+                      <td className="px-2 py-3">
+                        <RowKebabMenu
+                          onOpen={() => onRowClick(t)}
+                          onDelete={() => onDelete(t.id)}
+                        />
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Block 3: pagination — outside the table card, right-aligned */}
+      {rows.length > 0 && (
+        <TablePagination
+          page={safePage}
+          perPage={perPage}
+          total={total}
+          start={start}
+          end={end}
+          lastPage={lastPage}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+        />
+      )}
+    </>
+  )
+}
+
+function ColumnHeader({ label, sortKey, current, dir, onSort, align = 'left' }) {
+  const active = current === sortKey
+  const ChevIcon = dir === 'asc' ? ArrowUp : ArrowDown
+  return (
+    <th className={`px-4 py-2.5 text-[12px] font-medium text-neutral-500 ${align === 'right' ? 'text-right' : 'text-left'}`}>
+      <span className="inline-flex items-center gap-1.5">
+        <span className={active ? 'text-neutral-900' : ''}>{label}</span>
+        {active && <ChevIcon size={11} className="text-hl-blue" />}
+        <ColumnSortMenu
+          active={active}
+          dir={dir}
+          onSort={direction => onSort(sortKey, direction)}
+          align={align}
+        />
+      </span>
+    </th>
+  )
+}
+
+function ColumnSortMenu({ active, dir, onSort, align = 'left' }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  useEffect(() => {
+    if (!open) return
+    function handleMouseDown(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    function handleKey(e) {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [open])
+
+  return (
+    <span className="relative inline-flex" ref={ref}>
+      <button
+        onClick={e => { e.stopPropagation(); setOpen(v => !v) }}
+        title="Sort options"
+        className={`p-0.5 rounded transition-colors ${
+          active ? 'text-hl-blue' : 'text-neutral-300 hover:text-neutral-500'
+        }`}
+      >
+        <Filter size={11} />
+      </button>
+      {open && (
+        <div className={`absolute top-full mt-1 w-44 bg-white border border-gray-200 rounded-lg shadow-lg z-30 py-1 ${
+          align === 'right' ? 'right-0' : 'left-0'
+        }`}>
+          <button
+            onClick={() => { onSort('asc'); setOpen(false) }}
+            className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-[13px] text-left hover:bg-gray-50 transition-colors ${
+              active && dir === 'asc' ? 'text-hl-blue font-medium' : 'text-neutral-700'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <ArrowUp size={12} className={active && dir === 'asc' ? 'text-hl-blue' : 'text-neutral-400'} />
+              Sort ascending
+            </span>
+            {active && dir === 'asc' && <Check size={12} className="text-hl-blue" />}
+          </button>
+          <button
+            onClick={() => { onSort('desc'); setOpen(false) }}
+            className={`w-full flex items-center justify-between gap-2 px-3 py-2 text-[13px] text-left hover:bg-gray-50 transition-colors ${
+              active && dir === 'desc' ? 'text-hl-blue font-medium' : 'text-neutral-700'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <ArrowDown size={12} className={active && dir === 'desc' ? 'text-hl-blue' : 'text-neutral-400'} />
+              Sort descending
+            </span>
+            {active && dir === 'desc' && <Check size={12} className="text-hl-blue" />}
+          </button>
+        </div>
+      )}
+    </span>
+  )
+}
+
+function ViewToggle({ topicsView, setTopicsView }) {
+  return (
+    <div className="flex items-center gap-0.5 bg-gray-100 p-0.5 rounded-lg">
+      <button
+        onClick={() => setTopicsView('grid')}
+        title="Grid view"
+        className={`flex items-center justify-center w-8 h-7 rounded-md transition-all ${
+          topicsView === 'grid' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-500 hover:text-neutral-700'
+        }`}
+      >
+        <LayoutGrid size={14} />
+      </button>
+      <button
+        onClick={() => setTopicsView('list')}
+        title="List view"
+        className={`flex items-center justify-center w-8 h-7 rounded-md transition-all ${
+          topicsView === 'list' ? 'bg-white text-neutral-900 shadow-sm' : 'text-neutral-500 hover:text-neutral-700'
+        }`}
+      >
+        <List size={14} />
+      </button>
+    </div>
+  )
+}
+
+function UserAvatar({ user, size = 24 }) {
+  const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+  return (
+    <div
+      className="rounded-full flex items-center justify-center shrink-0"
+      style={{ background: user.color, width: size, height: size }}
+    >
+      <span className="text-white font-semibold leading-none" style={{ fontSize: Math.round(size * 0.42) }}>{initials}</span>
+    </div>
+  )
+}
+
+function RowKebabMenu({ onOpen, onDelete }) {
+  const [open, setOpen] = useState(false)
+  const [menuPos, setMenuPos] = useState({ top: 0, right: 0 })
+  const btnRef = useRef(null)
+  const menuRef = useRef(null)
+
+  function handleToggle(e) {
+    e.stopPropagation()
+    if (!open && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect()
+      setMenuPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right })
+    }
+    setOpen(v => !v)
+  }
+
+  useEffect(() => {
+    if (!open) return
+    function handleMouseDown(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target) &&
+          btnRef.current && !btnRef.current.contains(e.target)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleMouseDown)
+    return () => document.removeEventListener('mousedown', handleMouseDown)
+  }, [open])
+
+  return (
+    <div>
+      <button
+        ref={btnRef}
+        onClick={handleToggle}
+        title="More actions"
+        className={`w-7 h-7 flex items-center justify-center rounded-md transition-all ${
+          open ? 'bg-gray-100 text-neutral-700' : 'text-neutral-400 hover:text-neutral-700 hover:bg-gray-100'
+        }`}
+      >
+        <MoreVertical size={14} />
+      </button>
+      {open && createPortal(
+        <div
+          ref={menuRef}
+          style={{ position: 'fixed', top: menuPos.top, right: menuPos.right }}
+          className="w-36 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999] py-1"
+        >
+          <button
+            onClick={e => { e.stopPropagation(); onOpen(); setOpen(false) }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-neutral-700 hover:bg-gray-50 transition-colors"
+          >
+            <ExternalLink size={12} className="text-neutral-400" />
+            Open
+          </button>
+          <div className="h-px bg-gray-100 my-1" />
+          <button
+            onClick={e => { e.stopPropagation(); onDelete(); setOpen(false) }}
+            className="w-full flex items-center gap-2 px-3 py-2 text-[13px] text-red-600 hover:bg-red-50 transition-colors"
+          >
+            <Trash2 size={12} />
+            Delete
+          </button>
+        </div>,
+        document.body
+      )}
+    </div>
+  )
+}
+
+function TablePagination({ page, perPage, total, start, end, lastPage, onPageChange, onPerPageChange }) {
+  return (
+    <div className="flex items-center justify-end gap-4 text-[13px]">
+      <div className="flex items-center gap-2 text-neutral-600">
+        <span>Rows per page</span>
+        <div className="relative">
+          <select
+            value={perPage}
+            onChange={e => onPerPageChange(Number(e.target.value))}
+            className="appearance-none h-7 pl-2.5 pr-7 rounded-md border border-gray-200 bg-white text-[13px] text-neutral-700 focus:outline-none focus:border-hl-blue cursor-pointer"
+          >
+            <option value={15}>15</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+          </select>
+          <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
+        </div>
+      </div>
+      <span className="text-neutral-600">{start}-{end} of {total}</span>
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => onPageChange(Math.max(1, page - 1))}
+          disabled={page <= 1}
+          className="h-7 px-3 rounded-md border border-gray-200 bg-white text-[13px] text-neutral-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          Previous
+        </button>
+        <span className="h-7 min-w-7 px-2 rounded-md border border-hl-blue text-hl-blue text-[13px] font-semibold flex items-center justify-center">
+          {page}
+        </span>
+        <button
+          onClick={() => onPageChange(Math.min(lastPage, page + 1))}
+          disabled={page >= lastPage}
+          className="h-7 px-3 rounded-md border border-gray-200 bg-white text-[13px] text-neutral-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        >
+          Next
+        </button>
       </div>
     </div>
   )
