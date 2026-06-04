@@ -1,14 +1,20 @@
 import { useState, useEffect, useRef, useId } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import { Search, Plus, Trash2, TrendingUp, TrendingDown, RefreshCw, ChevronDown, ChevronLeft, ChevronRight, Calendar, Globe, Tag, AtSign, LayoutGrid, List, ArrowUp, ArrowDown, MoreVertical, Filter, ExternalLink, Check } from 'lucide-react'
+import { Search, Plus, Trash2, TrendingUp, TrendingDown, RefreshCw, ChevronDown, ChevronLeft, ChevronRight, Calendar, Globe, Tag, AtSign, LayoutGrid, List, ArrowUp, ArrowDown, MoreVertical, Filter, ExternalLink, Check, Clock } from 'lucide-react'
 import { siReddit } from 'simple-icons'
 import CreateTopicModal from '../components/CreateTopicModal'
 import PlatformIcon from '../components/PlatformIcon'
 
 const STORAGE_KEY = 'sl.topics.v1'
+const RECENT_SEARCHES_KEY = 'sl.recent.v1'
+const MAX_RECENT = 5
 const TOTAL_SEARCHES = 0
 const MAX_SEARCHES = 3
+
+const BUSINESS_SUGGESTIONS = ['HighLevel', 'CRM for agencies', 'Marketing automation', 'GoHighLevel reviews', 'White-label software']
+
+const SEED_RECENT = ['HighLevel CRM', 'email marketing tools', 'agency automation']
 
 const SOURCE_LABELS = {
   facebook: 'Facebook', twitter: 'X', instagram: 'Instagram',
@@ -142,6 +148,22 @@ function saveTopicsToStorage(topics) {
   }
 }
 
+function loadRecentSearches() {
+  try {
+    const stored = localStorage.getItem(RECENT_SEARCHES_KEY)
+    return stored ? JSON.parse(stored) : []
+  } catch {
+    return []
+  }
+}
+
+function addRecentSearch(query, current) {
+  const deduped = [query, ...current.filter(q => q.toLowerCase() !== query.toLowerCase())]
+  const trimmed = deduped.slice(0, MAX_RECENT)
+  try { localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(trimmed)) } catch {}
+  return trimmed
+}
+
 function Sparkline({ path }) {
   const uid = useId()
   const id = `grad-${uid.replace(/:/g, '')}`
@@ -176,6 +198,10 @@ export default function SearchPage() {
   const [trackDefault, setTrackDefault] = useState('')
   const [topics, setTopics] = useState(() => loadTopicsFromStorage())
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [recentSearches, setRecentSearches] = useState(() => {
+    const stored = loadRecentSearches()
+    return stored.length > 0 ? stored : SEED_RECENT
+  })
   const [topicsView, setTopicsView] = useState('list')
   const [topicsFilter, setTopicsFilter] = useState('')
   const searchRef = useRef(null)
@@ -215,6 +241,7 @@ export default function SearchPage() {
   function handleSearch(e) {
     e.preventDefault()
     if (!query.trim()) return
+    setRecentSearches(prev => addRecentSearch(query.trim(), prev))
     navigate('/topic-detail', { state: { query, isSavedTopic: false } })
   }
 
@@ -311,27 +338,45 @@ export default function SearchPage() {
                 placeholder="Search any keywords, brand or hashtags"
                 className="w-full pl-9 pr-4 h-9 rounded-md border border-gray-300 bg-white text-[14px] text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-hl-blue shadow-[0px_1px_2px_rgba(16,24,40,0.05)] transition-all"
               />
-              {showSuggestions && suggestions.length > 0 && (
+              {showSuggestions && (query.trim() ? suggestions.length > 0 : recentSearches.length > 0) && (
                 <div className="absolute top-full left-0 right-0 mt-1.5 bg-white border border-gray-200 rounded-xl shadow-lg z-30 overflow-hidden">
-                  {suggestions.map(s => {
-                    const sentimentColor = s.sentiment >= 65 ? 'text-positive' : s.sentiment >= 55 ? 'text-warning' : 'text-negative'
-                    const dotColor = s.sentiment >= 65 ? 'bg-positive' : s.sentiment >= 55 ? 'bg-warning' : 'bg-negative'
-                    return (
-                      <div
-                        key={s.query}
-                        onMouseDown={() => { navigate('/topic-detail', { state: { query: s.query } }); setShowSuggestions(false) }}
-                        className="flex items-center gap-2.5 px-3 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50 last:border-0"
-                      >
-                        <Search size={12} className="text-gray-300 shrink-0" />
-                        <span className="flex-1 text-[13px] text-gray-700">{s.query}</span>
-                        <span className="text-[12px] text-gray-400">{s.mentions.toLocaleString()} mentions</span>
-                        <div className={`flex items-center gap-1 text-[12px] font-semibold ${sentimentColor}`}>
-                          <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
-                          {s.sentiment}%
+                  {query.trim() ? (
+                    suggestions.map(s => {
+                      const sentimentColor = s.sentiment >= 65 ? 'text-positive' : s.sentiment >= 55 ? 'text-warning' : 'text-negative'
+                      const dotColor = s.sentiment >= 65 ? 'bg-positive' : s.sentiment >= 55 ? 'bg-warning' : 'bg-negative'
+                      return (
+                        <div
+                          key={s.query}
+                          onMouseDown={() => { setRecentSearches(prev => addRecentSearch(s.query, prev)); navigate('/topic-detail', { state: { query: s.query } }); setShowSuggestions(false) }}
+                          className="flex items-center gap-2.5 px-3 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors border-b border-gray-50 last:border-0"
+                        >
+                          <Search size={12} className="text-gray-300 shrink-0" />
+                          <span className="flex-1 text-[13px] text-gray-700">{s.query}</span>
+                          <span className="text-[12px] text-gray-400">{s.mentions.toLocaleString()} mentions</span>
+                          <div className={`flex items-center gap-1 text-[12px] font-semibold ${sentimentColor}`}>
+                            <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+                            {s.sentiment}%
+                          </div>
                         </div>
+                      )
+                    })
+                  ) : (
+                    <>
+                      <div className="px-3 pt-2.5 pb-1.5">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">Recent</span>
                       </div>
-                    )
-                  })}
+                      {recentSearches.map(q => (
+                        <div
+                          key={q}
+                          onMouseDown={() => { navigate('/topic-detail', { state: { query: q } }); setShowSuggestions(false) }}
+                          className="flex items-center gap-2.5 px-3 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors border-t border-gray-50"
+                        >
+                          <Clock size={12} className="text-gray-300 shrink-0" />
+                          <span className="text-[13px] text-gray-700">{q}</span>
+                        </div>
+                      ))}
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -343,6 +388,18 @@ export default function SearchPage() {
               Search
             </button>
           </form>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[13px] text-gray-400">Try:</span>
+            {BUSINESS_SUGGESTIONS.map(s => (
+              <span
+                key={s}
+                onMouseDown={() => navigate('/topic-detail', { state: { query: s } })}
+                className="px-2.5 py-1 rounded-full bg-gray-100 text-[12px] text-gray-600 hover:bg-hl-blue-light hover:text-hl-blue cursor-pointer transition-colors"
+              >
+                {s}
+              </span>
+            ))}
+          </div>
         </div>
 
         {/* ── Tab content ── */}
