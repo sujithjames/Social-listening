@@ -103,19 +103,19 @@ export default function TopBar() {
         {/* Right: action buttons */}
         <div className="flex items-center gap-2 shrink-0 py-1.5">
           {/* Icon-only buttons */}
-          <button className="size-8 flex items-center justify-center rounded hover:bg-[#F2F4F7]">
+          <button className="size-8 flex items-center justify-center rounded-lg hover:bg-[#F2F4F7]">
             <RefreshCw size={15} className="text-[#344054]" />
           </button>
-          <button className="size-8 flex items-center justify-center rounded hover:bg-[#F2F4F7]">
+          <button className="size-8 flex items-center justify-center rounded-lg hover:bg-[#F2F4F7]">
             <Settings size={15} className="text-[#344054]" />
           </button>
           {/* + Socials */}
-          <button className="flex items-center gap-2 h-8 px-2.5 py-1.5 rounded border border-[#D0D5DD] bg-white shadow-[0px_1px_2px_rgba(16,24,40,0.05)] text-[#344054] text-[14px] font-semibold hover:bg-[#F9FAFB]">
+          <button className="flex items-center gap-2 h-8 px-2.5 py-1.5 rounded-lg border border-[#D0D5DD] bg-white shadow-[0px_1px_2px_rgba(16,24,40,0.05)] text-[#344054] text-[14px] font-semibold hover:bg-[#F9FAFB]">
             <Plus size={15} />
             Socials
           </button>
           {/* + New post */}
-          <button className="flex items-center gap-2 h-8 px-2.5 py-1.5 rounded border border-[#155EEF] bg-[#155EEF] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] text-white text-[14px] font-semibold hover:bg-[#1249C0]">
+          <button className="flex items-center gap-2 h-8 px-2.5 py-1.5 rounded-lg border border-[#155EEF] bg-[#155EEF] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] text-white text-[14px] font-semibold hover:bg-[#1249C0]">
             <Plus size={15} />
             New post
           </button>

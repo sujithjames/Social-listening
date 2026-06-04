@@ -577,7 +577,7 @@ function TopicCard({ topic, onDelete, onClick }) {
         <p className="text-[13px] font-semibold text-gray-900 leading-snug">{topic.name}</p>
         <button
           onClick={(e) => { e.stopPropagation(); onDelete() }}
-          className="shrink-0 p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-md transition-all group-hover:text-gray-400"
+          className="shrink-0 p-1 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all group-hover:text-gray-400"
         >
           <Trash2 size={13} />
         </button>
@@ -765,7 +765,7 @@ function TrendColumn({ title, logo, accentColor, items, onTrack }) {
               <div className="shrink-0 w-16 flex items-center justify-end">
                 <button
                   onClick={e => { e.stopPropagation(); onTrack(item.name) }}
-                  className="hidden group-hover:flex items-center gap-0.5 text-[12px] font-semibold text-hl-blue bg-hl-blue-light hover:bg-blue-100 px-2 py-1 rounded-md transition-colors"
+                  className="hidden group-hover:flex items-center gap-0.5 text-[12px] font-semibold text-hl-blue bg-hl-blue-light hover:bg-blue-100 px-2 py-1 rounded-lg transition-colors"
                 >
                   + Track
                 </button>
@@ -1176,7 +1176,7 @@ function RowKebabMenu({ onOpen, onDelete }) {
         ref={btnRef}
         onClick={handleToggle}
         title="More actions"
-        className={`w-7 h-7 flex items-center justify-center rounded-md transition-all ${
+        className={`w-7 h-7 flex items-center justify-center rounded-lg transition-all ${
           open ? 'bg-gray-100 text-neutral-700' : 'text-neutral-400 hover:text-neutral-700 hover:bg-gray-100'
         }`}
       >
@@ -1233,17 +1233,17 @@ function TablePagination({ page, perPage, total, start, end, lastPage, onPageCha
         <button
           onClick={() => onPageChange(Math.max(1, page - 1))}
           disabled={page <= 1}
-          className="h-7 px-3 rounded-md border border-gray-200 bg-white text-[13px] text-neutral-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="h-7 px-3 rounded-lg border border-gray-200 bg-white text-[13px] text-neutral-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           Previous
         </button>
-        <span className="h-7 min-w-7 px-2 rounded-md border border-hl-blue text-hl-blue text-[13px] font-semibold flex items-center justify-center">
+        <span className="h-7 min-w-7 px-2 rounded-lg border border-hl-blue text-hl-blue text-[13px] font-semibold flex items-center justify-center">
           {page}
         </span>
         <button
           onClick={() => onPageChange(Math.min(lastPage, page + 1))}
           disabled={page >= lastPage}
-          className="h-7 px-3 rounded-md border border-gray-200 bg-white text-[13px] text-neutral-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="h-7 px-3 rounded-lg border border-gray-200 bg-white text-[13px] text-neutral-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           Next
         </button>

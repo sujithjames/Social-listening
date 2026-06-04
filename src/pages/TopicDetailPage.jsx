@@ -690,7 +690,7 @@ export default function TopicDetailPage() {
           <div className="relative flex-1" ref={platformMenuRef}>
             <button
               onClick={() => setShowPlatformMenu(v => !v)}
-              className="flex items-center gap-2 h-7 px-2.5 rounded-md border border-neutral-200 text-[12px] text-neutral-700 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 h-7 px-2.5 rounded-lg border border-neutral-200 text-[12px] text-neutral-700 hover:bg-gray-50 transition-colors"
             >
               <div className="flex -space-x-1">
                 {noneSelected ? (
@@ -762,7 +762,7 @@ export default function TopicDetailPage() {
             <div className="relative">
               <button
                 onClick={() => setShowDateMenu(v => !v)}
-                className="flex items-center gap-1.5 h-7 px-2.5 rounded-md border border-neutral-200 text-[12px] text-neutral-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg border border-neutral-200 text-[12px] text-neutral-700 hover:bg-gray-50 transition-colors"
               >
                 {dateRange}<ChevronDown size={12} className="text-neutral-400" />
               </button>
@@ -776,18 +776,18 @@ export default function TopicDetailPage() {
                 </div>
               )}
             </div>
-            <button className="w-7 h-7 flex items-center justify-center rounded-md border border-neutral-200 text-neutral-500 hover:bg-gray-50 transition-colors"><RefreshCw size={13} /></button>
-            <button className="w-7 h-7 flex items-center justify-center rounded-md border border-neutral-200 text-neutral-500 hover:bg-gray-50 transition-colors"><Share2 size={13} /></button>
-            <button className="w-7 h-7 flex items-center justify-center rounded-md border border-neutral-200 text-neutral-500 hover:bg-gray-50 transition-colors"><Download size={13} /></button>
+            <button className="w-7 h-7 flex items-center justify-center rounded-lg border border-neutral-200 text-neutral-500 hover:bg-gray-50 transition-colors"><RefreshCw size={13} /></button>
+            <button className="w-7 h-7 flex items-center justify-center rounded-lg border border-neutral-200 text-neutral-500 hover:bg-gray-50 transition-colors"><Share2 size={13} /></button>
+            <button className="w-7 h-7 flex items-center justify-center rounded-lg border border-neutral-200 text-neutral-500 hover:bg-gray-50 transition-colors"><Download size={13} /></button>
             <div className="w-px h-5 bg-neutral-200" />
             {saved ? (
-              <div className="flex items-center gap-1.5 h-7 px-3 rounded-md bg-green-50 border border-green-200 text-positive text-[12px] font-semibold">
+              <div className="flex items-center gap-1.5 h-7 px-3 rounded-lg bg-green-50 border border-green-200 text-positive text-[12px] font-semibold">
                 <BookmarkCheck size={13} />Saved
               </div>
             ) : (
               <button
                 onClick={handleSave}
-                className="flex items-center gap-1.5 h-7 px-3 rounded-md bg-hl-blue hover:bg-hl-blue-dark text-white text-[12px] font-semibold transition-colors"
+                className="flex items-center gap-1.5 h-7 px-3 rounded-lg bg-hl-blue hover:bg-hl-blue-dark text-white text-[12px] font-semibold transition-colors"
               >
                 <Bookmark size={13} />Save as topic
               </button>

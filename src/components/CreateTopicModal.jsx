@@ -327,7 +327,7 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
           <div className="px-6 py-3 border-t border-gray-100 flex items-center justify-between shrink-0">
             <button
               onClick={step === 1 ? onClose : () => setStep(1)}
-              className="h-9 px-4 rounded-md border border-gray-300 bg-white text-[14px] font-semibold text-gray-700 hover:bg-gray-50 shadow-[0px_1px_2px_rgba(16,24,40,0.05)] transition-colors"
+              className="h-9 px-4 rounded-lg border border-gray-300 bg-white text-[14px] font-semibold text-gray-700 hover:bg-gray-50 shadow-[0px_1px_2px_rgba(16,24,40,0.05)] transition-colors"
             >
               {step === 1 ? 'Cancel' : 'Back'}
             </button>
@@ -336,7 +336,7 @@ export default function CreateTopicModal({ onClose, onCreated, defaultTitle = ''
               <button
                 onClick={() => step === 1 ? setStep(2) : setStep(3)}
                 disabled={step === 1 ? !step1Valid : !step2Valid}
-                className="h-9 px-5 rounded-md bg-hl-blue text-white text-[14px] font-semibold hover:bg-hl-blue-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
+                className="h-9 px-5 rounded-lg bg-hl-blue text-white text-[14px] font-semibold hover:bg-hl-blue-dark transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-[0px_1px_2px_rgba(16,24,40,0.05)]"
               >
                 {step === 1 ? 'Next' : 'Create topic'}
               </button>
