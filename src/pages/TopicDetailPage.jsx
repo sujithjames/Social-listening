@@ -488,6 +488,7 @@ export default function TopicDetailPage() {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true)
     const t = setTimeout(() => setIsLoading(false), 1800)
     return () => clearTimeout(t)

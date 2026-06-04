@@ -26,19 +26,6 @@ const SOURCE_TO_PLATFORM = {
   TikTok: 'TikTok', Facebook: 'Facebook',
 }
 
-const PLATFORM_COLORS = {
-  facebook: '#1877F2',
-  twitter: '#0F172A',
-  instagram: '#E1306C',
-  youtube: '#FF0000',
-  reddit: '#FF4500',
-  tiktok: '#0F172A',
-  linkedin: '#0077B5',
-  web: '#475467',
-  telegram: '#2AABEE',
-  news: '#155EEF',
-}
-
 const SPARKLINE_PATHS = [
   "M0,28 C8,26 16,22 24,20 C32,18 40,24 48,22 C56,20 64,14 72,12 C80,10 88,16 96,14 C104,12 112,8 120,6",
   "M0,24 C8,28 16,20 24,22 C32,24 40,18 48,16 C56,14 64,18 72,14 C80,10 88,12 96,8 C104,6 112,10 120,6",
@@ -187,7 +174,7 @@ export default function SearchPage() {
   const [query, setQuery] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [trackDefault, setTrackDefault] = useState('')
-  const [topics, setTopics] = useState([])
+  const [topics, setTopics] = useState(() => loadTopicsFromStorage())
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [topicsView, setTopicsView] = useState('list')
   const [topicsFilter, setTopicsFilter] = useState('')
@@ -210,10 +197,6 @@ export default function SearchPage() {
     if (!el) return
     el.scrollBy({ left: dir * 224, behavior: 'smooth' })
   }
-
-  useEffect(() => {
-    setTopics(loadTopicsFromStorage())
-  }, [])
 
   useEffect(() => {
     function handleMouseDown(e) {
@@ -903,6 +886,7 @@ function TopicsList({ topics, filter, onRowClick, onDelete }) {
   const [page, setPage] = useState(1)
   const [perPage, setPerPage] = useState(15)
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setPage(1) }, [topics.length, sortKey, sortDir, perPage])
 
   const total = rows.length
