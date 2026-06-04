@@ -160,7 +160,7 @@ function loadRecentSearches() {
 function addRecentSearch(query, current) {
   const deduped = [query, ...current.filter(q => q.toLowerCase() !== query.toLowerCase())]
   const trimmed = deduped.slice(0, MAX_RECENT)
-  try { localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(trimmed)) } catch (_e) { /* storage unavailable */ }
+  try { localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(trimmed)) } catch (storageError) { void storageError }
   return trimmed
 }
 
