@@ -3,8 +3,10 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, RefreshCw, Share2, Download, Bookmark, BookmarkCheck,
   ChevronDown, ExternalLink, TrendingUp, Flame, Eye, Heart, Repeat2, MessageSquare,
-  Check, X, Search, Sparkles, BarChart3, Filter,
+  Check, X, Search, Sparkles, BarChart3, Filter, Bell,
 } from 'lucide-react'
+import AlertsModal from '../components/AlertsModal'
+import { loadAlerts } from '../lib/alerts'
 import {
   ResponsiveContainer, AreaChart, Area, LineChart, Line, BarChart, Bar,
   PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis,
@@ -470,6 +472,8 @@ export default function TopicDetailPage() {
   const [showDateMenu, setShowDateMenu] = useState(false)
   const [saved, setSaved] = useState(isSavedTopic)
   const [showToast, setShowToast] = useState(false)
+  const [alertsOpen, setAlertsOpen] = useState(false)
+  const [alertCount, setAlertCount] = useState(() => loadAlerts(query).length)
   const [sentimentFilter, setSentimentFilter] = useState('all')
   const [isLoading, setIsLoading] = useState(true)
   const [activeSection, setActiveSection] = useState('overview')
@@ -780,6 +784,16 @@ export default function TopicDetailPage() {
             <button className="w-7 h-7 flex items-center justify-center rounded-lg border border-neutral-200 text-neutral-500 hover:bg-gray-50 transition-colors"><RefreshCw size={13} /></button>
             <button className="w-7 h-7 flex items-center justify-center rounded-lg border border-neutral-200 text-neutral-500 hover:bg-gray-50 transition-colors"><Share2 size={13} /></button>
             <button className="w-7 h-7 flex items-center justify-center rounded-lg border border-neutral-200 text-neutral-500 hover:bg-gray-50 transition-colors"><Download size={13} /></button>
+            <button
+              onClick={() => setAlertsOpen(true)}
+              aria-label="Alerts"
+              className="relative w-7 h-7 flex items-center justify-center rounded-lg border border-neutral-200 text-neutral-500 hover:bg-gray-50 transition-colors"
+            >
+              <Bell size={13} />
+              {saved && alertCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-[15px] h-[15px] px-1 rounded-full bg-hl-blue text-white text-[9px] font-bold flex items-center justify-center ring-2 ring-white tabular-nums">{alertCount}</span>
+              )}
+            </button>
             <div className="w-px h-5 bg-neutral-200" />
             {saved ? (
               <div className="flex items-center gap-1.5 h-7 px-3 rounded-lg bg-green-50 border border-green-200 text-positive text-[12px] font-semibold">
@@ -1265,6 +1279,16 @@ export default function TopicDetailPage() {
           </div>
         </div>
       )}
+
+      <AlertsModal
+        key={alertsOpen ? 'alerts-open' : 'alerts-closed'}
+        open={alertsOpen}
+        onClose={() => setAlertsOpen(false)}
+        topicName={query}
+        isSaved={saved}
+        onSaveTopic={handleSave}
+        onAlertsChange={setAlertCount}
+      />
     </div>
   )
 }

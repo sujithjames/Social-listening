@@ -143,6 +143,7 @@ Three screens active. Routes live in `src/App.jsx`.
 - Toolbar: Back · query title · platform filter chips (multi-select) · date range picker · Save as topic button
 - Sections: KPI cards · Sentiment analysis (donut + area chart) · Mentions (bar + composed chart + heatmap) · Platform intelligence (pie + line chart) · Emotion & keywords (radar + bars + word cloud) · Engagement (4 metric cards + area + bar) · Conversation feed (2-col card grid, filterable by sentiment) · Audience insights (language/gender/age/location)
 - Saving a topic writes to `localStorage` under key `sl.topics.v1`
+- **Alerts** (Feature 3): a `Bell` button in the toolbar (next to Save as topic) opens `<AlertsModal>`. On a saved topic it opens the manage list; on an unsaved search it shows the save-to-topic gate first. Modal has two states — a compact **manage** list (3-slot meter, named alert cards, pause/edit/delete) and a wide **create** split (left form / right live email preview). Alerts persist per topic in `localStorage` under key `sl.alerts.v1` (helpers in `src/lib/alerts.js`); max 3 per topic. The modal is remounted via a `key` on open so its view state resets cleanly. Deferred for later layers: day-0 (no email templates) state and RBAC.
 
 ---
 
