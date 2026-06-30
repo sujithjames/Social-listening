@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   Bell, X, ChevronLeft, ChevronDown, Plus, Check, MoreVertical, Pencil, Trash2,
-  Shield, TrendingUp, CalendarDays, PenLine, ArrowUp,
+  Shield, TrendingUp, CalendarDays, PenLine, ArrowUp, Clock,
 } from 'lucide-react'
 import { loadAlerts, saveAlerts } from '../lib/alerts'
 
@@ -16,11 +16,12 @@ const METRICS = [
 const ALL_KEYS = METRICS.map(m => m.k)
 const THRESHOLD = { low: 35, medium: 25, high: 10 }
 const SENS = {
-  low: { t: 'Only major spikes', f: '~1–2 / month', word: 'highest-signal' },
-  medium: { t: 'Balanced', f: '~1–2 / week', word: 'balanced' },
-  high: { t: 'Catch everything', f: '~5 / week', word: 'broad' },
+  low: { t: 'Only major spikes', word: 'highest-signal' },
+  medium: { t: 'Balanced', word: 'balanced' },
+  high: { t: 'Catch everything', word: 'broad' },
 }
-const DELIVERIES = ['Real-time', 'Daily', 'Weekly', 'Custom']
+const DELIVERIES = ['Daily', 'Weekly']
+const SEND_TIME = '9:00 AM'
 const ME = 'sujith@gohighlevel.com'
 
 const DRIVER = {
@@ -32,12 +33,6 @@ const DRIVER = {
   engagement: '4.2K reactions · 312 reposts',
 }
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const WEEKDAY_LETTERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-const TIME_OPTIONS = ['6:00 AM', '9:00 AM', '12:00 PM', '3:00 PM', '6:00 PM', '9:00 PM']
-const UNITS = ['day', 'week', 'month']
-const DEFAULT_CUSTOM = { every: 1, unit: 'week', days: ['Mon'], time: '9:00 AM' }
-
 const RECIPE_ICON = { rep: Shield, mom: TrendingUp, pulse: CalendarDays, scratch: PenLine }
 const RECIPE_TINT = {
   rep: 'bg-red-50 text-negative',
@@ -46,10 +41,10 @@ const RECIPE_TINT = {
   scratch: 'bg-neutral-100 text-neutral-600',
 }
 const RECIPES = {
-  rep: { name: 'Reputation guard', icon: 'rep', metrics: ['Negative sentiment'], sens: 'high', delivery: 'Real-time' },
+  rep: { name: 'Reputation guard', icon: 'rep', metrics: ['Negative sentiment'], sens: 'high', delivery: 'Daily' },
   mom: { name: 'Momentum watch', icon: 'mom', metrics: ['Topic volume', 'Impressions'], sens: 'medium', delivery: 'Daily' },
   pulse: { name: 'Weekly pulse', icon: 'pulse', metrics: [...ALL_KEYS], sens: 'medium', delivery: 'Weekly' },
-  scratch: { name: 'New alert', icon: 'scratch', metrics: [...ALL_KEYS], sens: 'medium', delivery: 'Real-time' },
+  scratch: { name: 'New alert', icon: 'scratch', metrics: [...ALL_KEYS], sens: 'medium', delivery: 'Daily' },
 }
 const TEMPLATES = [
   { id: 'default', nm: 'Social Listening default', brandClass: 'bg-hl-blue', accentText: 'text-hl-blue', logo: 'SL', brandName: 'Social Listening', isDefault: true, skin: 'product' },
@@ -57,40 +52,29 @@ const TEMPLATES = [
   { id: 'min', nm: 'Brand — Minimal', brandClass: 'bg-neutral-900', accentText: 'text-neutral-900', logo: 'BR', brandName: 'Your Brand', skin: 'minimal' },
 ]
 
-function joinDays(days) {
-  const ordered = WEEKDAYS.filter(d => days.includes(d))
-  if (ordered.length === 7) return 'every day'
-  if (ordered.length === 0) return ''
-  if (ordered.length === 1) return ordered[0]
-  if (ordered.length === 2) return `${ordered[0]} & ${ordered[1]}`
-  return `${ordered.slice(0, -1).join(', ')} & ${ordered[ordered.length - 1]}`
+const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+function nextMonday() {
+  const now = new Date()
+  const add = (1 - now.getDay() + 7) % 7
+  const next = new Date(now)
+  next.setDate(now.getDate() + add)
+  return `${WEEKDAY_NAMES[next.getDay()]}, ${MONTH_NAMES[next.getMonth()]} ${next.getDate()}`
 }
-function customSummary(c) {
-  if (!c) return ''
-  if (c.unit === 'week') {
-    const days = joinDays(c.days)
-    if (!days) return 'Pick at least one day'
-    const base = c.every === 1 ? 'Every week' : `Every ${c.every} weeks`
-    return `${base} on ${days} at ${c.time}`
-  }
-  const base = c.every === 1 ? `Every ${c.unit}` : `Every ${c.every} ${c.unit}s`
-  return `${base} at ${c.time}`
-}
-function delShort(d, custom) {
-  if (d === 'Custom') return custom ? customSummary(custom).toLowerCase() : 'custom schedule'
-  return d === 'Real-time' ? 'real-time' : d === 'Daily' ? 'daily digest' : 'weekly summary'
+function delShort(d) {
+  return d === 'Weekly' ? `weekly summary at ${SEND_TIME}` : `daily digest at ${SEND_TIME}`
 }
 function alertSummary(a) {
   const ms = a.metrics.length === METRICS.length ? 'All metrics' : a.metrics.join(' & ')
   const who = a.recipients.length === 1 ? 'you' : `${a.recipients.length} people`
-  return `${ms} · ${delShort(a.delivery, a.custom)} → ${who}`
+  return `${ms} · ${delShort(a.delivery)} → ${who}`
 }
 function recipeDraft(key) {
   const r = RECIPES[key]
-  return { name: r.name, icon: r.icon, metrics: [...r.metrics], sens: r.sens, delivery: r.delivery, recipients: [ME], template: 'default', custom: { ...DEFAULT_CUSTOM } }
+  return { name: r.name, icon: r.icon, metrics: [...r.metrics], sens: r.sens, delivery: r.delivery, recipients: [ME], template: 'default' }
 }
 function alertToDraft(a) {
-  return { name: a.name, icon: a.icon, metrics: [...a.metrics], sens: a.sens, delivery: a.delivery, recipients: [...a.recipients], template: a.template, custom: a.custom ? { ...a.custom } : { ...DEFAULT_CUSTOM } }
+  return { name: a.name, icon: a.icon, metrics: [...a.metrics], sens: a.sens, delivery: a.delivery, recipients: [...a.recipients], template: a.template }
 }
 
 function Sparkline({ data, className, w = 50, h = 16 }) {
@@ -341,18 +325,11 @@ export default function AlertsModal({ open, onClose, topicName, isSaved, onSaveT
   function CreateView() {
     const d = draft
     const allMetrics = d.metrics.length === METRICS.length
-    const customInvalid = d.delivery === 'Custom' && d.custom?.unit === 'week' && d.custom.days.length === 0
-    const canSave = d.recipients.length > 0 && d.metrics.length > 0 && !customInvalid
+    const canSave = d.recipients.length > 0 && d.metrics.length > 0
     const cur = TEMPLATES.find(t => t.id === d.template) || TEMPLATES[0]
 
     function toggleMetric(k) {
       setDraft(prev => ({ ...prev, metrics: prev.metrics.includes(k) ? prev.metrics.filter(x => x !== k) : [...prev.metrics, k] }))
-    }
-    function setCustom(fn) {
-      setDraft(prev => ({ ...prev, custom: fn(prev.custom) }))
-    }
-    function toggleDay(day) {
-      setCustom(c => ({ ...c, days: c.days.includes(day) ? c.days.filter(x => x !== day) : [...c.days, day] }))
     }
     function addRecipient() {
       const v = recipientInput.trim()
@@ -362,8 +339,8 @@ export default function AlertsModal({ open, onClose, topicName, isSaved, onSaveT
 
     return (
       <>
-        <div className="px-5 py-4 border-b border-neutral-200 flex items-start gap-3 bg-gradient-to-r from-hl-blue-light/50 to-white">
-          <button onClick={backToManage} className="w-[34px] h-[34px] rounded-lg border border-neutral-200 bg-white text-neutral-600 hover:bg-gray-50 flex items-center justify-center shrink-0"><ChevronLeft size={16} /></button>
+        <div className="px-5 py-4 border-b border-neutral-200 flex items-start gap-3">
+          <button onClick={backToManage} className="w-[34px] h-[34px] rounded-lg border border-neutral-200 text-neutral-600 hover:bg-gray-50 flex items-center justify-center shrink-0"><ChevronLeft size={16} /></button>
           <div className="flex-1">
             <h3 className="text-[16px] font-semibold text-neutral-900 leading-tight">{editingId ? 'Edit alert' : 'New alert'}</h3>
             <p className="text-[12px] text-neutral-500 mt-0.5">Notify me when "{topicName}" moves</p>
@@ -446,8 +423,7 @@ export default function AlertsModal({ open, onClose, topicName, isSaved, onSaveT
                       ))}
                     </div>
                     <div className="mt-3.5 flex items-center gap-2 rounded-lg bg-gray-50 border border-neutral-200 px-3.5 py-2.5">
-                      <span className="text-[13px] font-semibold text-neutral-900 tabular-nums">{SENS[d.sens].f}</span>
-                      <span className="text-[12px] text-neutral-500">· triggers at ±{THRESHOLD[d.sens]}% moves</span>
+                      <span className="text-[13px] font-semibold text-neutral-900">Triggers at ±{THRESHOLD[d.sens]}% moves</span>
                       {d.sens === 'medium' && <span className="ml-auto text-[11px] font-semibold text-hl-blue bg-hl-blue-light px-2 py-0.5 rounded-full shrink-0">Recommended</span>}
                     </div>
                   </>
@@ -462,53 +438,10 @@ export default function AlertsModal({ open, onClose, topicName, isSaved, onSaveT
                   <button key={x} onClick={() => setDraft(prev => ({ ...prev, delivery: x }))} className={`flex-1 py-2.5 rounded-lg border text-[13px] font-semibold transition-colors ${d.delivery === x ? 'border-hl-blue bg-hl-blue-light text-hl-blue-dark' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-gray-50'}`}>{x}</button>
                 ))}
               </div>
-
-              {d.delivery === 'Custom' && (
-                <div className="sl-row-in mt-2.5 rounded-xl border border-neutral-200 bg-gray-50 p-3.5 flex flex-col gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-[13px] text-neutral-600 w-[72px] shrink-0">Send every</span>
-                    <div className="flex items-center border border-neutral-300 rounded-lg bg-white h-9">
-                      <button onClick={() => setCustom(c => ({ ...c, every: Math.max(1, c.every - 1) }))} disabled={d.custom.every <= 1} className="w-8 h-full flex items-center justify-center text-neutral-500 hover:text-neutral-900 disabled:opacity-30 disabled:cursor-not-allowed">−</button>
-                      <span className="w-7 text-center text-[14px] font-semibold text-neutral-900 tabular-nums">{d.custom.every}</span>
-                      <button onClick={() => setCustom(c => ({ ...c, every: Math.min(12, c.every + 1) }))} disabled={d.custom.every >= 12} className="w-8 h-full flex items-center justify-center text-neutral-500 hover:text-neutral-900 disabled:opacity-30 disabled:cursor-not-allowed">+</button>
-                    </div>
-                    <div className="flex gap-1">
-                      {UNITS.map(u => (
-                        <button key={u} onClick={() => setCustom(c => ({ ...c, unit: u }))} className={`px-2.5 h-9 rounded-lg border text-[13px] font-medium transition-colors ${d.custom.unit === u ? 'border-hl-blue bg-hl-blue-light text-hl-blue-dark' : 'border-neutral-300 bg-white text-neutral-600 hover:bg-gray-50'}`}>{u}{d.custom.every > 1 ? 's' : ''}</button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {d.custom.unit === 'week' && (
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-[13px] text-neutral-600 w-[72px] shrink-0">On</span>
-                      <div className="flex gap-1.5">
-                        {WEEKDAYS.map((day, i) => {
-                          const on = d.custom.days.includes(day)
-                          return (
-                            <button key={day} onClick={() => toggleDay(day)} aria-label={day} className={`w-8 h-8 rounded-full text-[12px] font-semibold transition-colors ${on ? 'bg-hl-blue text-white' : 'bg-white border border-neutral-300 text-neutral-600 hover:border-hl-blue-border'}`}>{WEEKDAY_LETTERS[i]}</button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-[13px] text-neutral-600 w-[72px] shrink-0">At</span>
-                    <div className="relative">
-                      <select value={d.custom.time} onChange={e => setCustom(c => ({ ...c, time: e.target.value }))} className="appearance-none border border-neutral-300 rounded-lg bg-white h-9 pl-3 pr-8 text-[14px] font-medium text-neutral-900 focus:outline-2 focus:outline-hl-blue cursor-pointer">
-                        {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
-                      </select>
-                      <ChevronDown size={15} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-3 border-t border-neutral-200">
-                    <CalendarDays size={15} className={`shrink-0 ${customInvalid ? 'text-warning' : 'text-hl-blue'}`} />
-                    <span className={`text-[13px] font-semibold ${customInvalid ? 'text-warning' : 'text-hl-blue-dark'}`}>{customSummary(d.custom)}</span>
-                  </div>
-                </div>
-              )}
+              <div className="flex items-center gap-1.5 mt-2 text-[12px] text-neutral-500">
+                <Clock size={13} className="text-neutral-400 shrink-0" />
+                {d.delivery === 'Weekly' ? `Sends Mondays at ${SEND_TIME} · next on ${nextMonday()}` : `Sends every morning at ${SEND_TIME}`}
+              </div>
             </div>
 
             <div className="mb-5">
@@ -572,12 +505,9 @@ export default function AlertsModal({ open, onClose, topicName, isSaved, onSaveT
           </div>
         </div>
 
-        <div className="px-5 py-3.5 border-t border-neutral-200 flex items-center justify-between gap-3">
-          <button onClick={backToManage} className="text-[13px] font-semibold text-neutral-600 hover:text-neutral-900 px-1 py-1.5">← Alerts</button>
-          <div className="flex items-center gap-3">
-            <span className="text-[12px] text-neutral-500 hidden sm:inline">{allMetrics ? 'All metrics' : `${d.metrics.length} metric${d.metrics.length === 1 ? '' : 's'}`} · {SENS[d.sens].f}</span>
-            <button onClick={saveDraft} disabled={!canSave} className="h-10 px-[18px] rounded-lg bg-hl-blue text-white text-[14px] font-semibold hover:bg-hl-blue-dark transition-colors disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed">{editingId ? 'Save changes' : 'Create alert'}</button>
-          </div>
+        <div className="px-5 py-3.5 border-t border-neutral-200 flex items-center justify-end gap-3">
+          <span className="text-[12px] text-neutral-500 hidden sm:inline">{allMetrics ? 'All metrics' : `${d.metrics.length} metric${d.metrics.length === 1 ? '' : 's'}`}</span>
+          <button onClick={saveDraft} disabled={!canSave} className="h-10 px-[18px] rounded-lg bg-hl-blue text-white text-[14px] font-semibold hover:bg-hl-blue-dark transition-colors disabled:bg-neutral-200 disabled:text-neutral-400 disabled:cursor-not-allowed">{editingId ? 'Save changes' : 'Create alert'}</button>
         </div>
       </>
     )
